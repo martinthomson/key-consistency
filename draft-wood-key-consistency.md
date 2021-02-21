@@ -24,6 +24,20 @@ author:
 normative:
   RFC2119:
   RFC7748:
+  I-D.thomson-http-oblivious:
+    title: "Oblivious HTTP"
+    date: {DATE}
+    seriesinfo:
+      Internet-Draft: draft-ietf-http-oblivious-latest
+    author:
+      -
+        ins: M.Thomson
+        name: Martin Thomson
+        org: Mozilla
+      -
+        ins: C.A.Wood
+        name: Christopher A. Wood
+        org: Cloudflare
 
 --- abstract
 
@@ -37,7 +51,7 @@ of open problems in this area.
 # Introduction
 
 Several proposed privacy-enhancing protocols such as Privacy Pass {{?I-D.ietf-privacypass-protocol}},
-Oblivious DoH {{?I-D.pauly-dprive-oblivious-doh}}, and Oblivious HTTP {{?I-D.thomson-http-oblivious}}
+Oblivious DoH {{?I-D.pauly-dprive-oblivious-doh}}, and Oblivious HTTP {{I-D.thomson-http-oblivious}}
 require clients to obtain and use a public key for execution. For example, Privacy Pass public keys
 are used to privately obtain tokens for anonymous resumption. Oblivious DoH and HTTP both use public
 keys to encrypt messages to a particular server. In all cases, a common security goal is that recipients
@@ -54,7 +68,7 @@ solutions to this problem.
 
 {::boilerplate bcp14}
 
-# Core Requirements {#requirements}
+# Core Requirements {#reqs}
 
 Privacy-focused protocols which rely on widely shared public keys typically require keys be consistent
 and correct. Informally, key consistency is the requirement that all users of a key share the
@@ -86,8 +100,8 @@ There are a variety of ways in systems may build systems for ensuring key consis
 ranging in operational complexity to ease-of-implementation. In this section, we survey a number of
 possible solutions. The viaibility of each varies depending on the applicable threat model, external
 dependencies, and overall system requirements. We do not include the fixed public key model from
-{{requirements}}, as this is likely not a viable solution for systems and protocls in practice.
-In all scenarios, the server corresponding to the desired key is considered malicious.
+{{reqs}}, as this is likely not a viable solution for systems and protocls in practice. In all scenarios,
+the server corresponding to the desired key is considered malicious.
 
 ## User-Driven Discovery {#user-based}
 
