@@ -103,15 +103,16 @@ dependencies, and overall system requirements. We do not include the fixed publi
 {{reqs}}, as this is likely not a viable solution for systems and protocls in practice. In all scenarios,
 the server corresponding to the desired key is considered malicious.
 
-## User-Driven Discovery {#user-based}
+## Server-Provided Key Discovery {#server-based}
 
 In this model, users would directly query servers for their corresponding public key. The properties
 of this solution depend on external mechanisms in place to ensure consistency or correctness. Absent
 any such mechanisms, servers can produce unique keys for users without detection. External mechanisms
 to ensure consistency here might include, though are not limited to:
 
+- Presenting a signed assertion from a trusted entity that the key is unique.
 - Presenting proof that the key is present in some tamper-proof log, similar to Certificate
-  Transparency logs.
+  Transparency ({{!RFC6962}}) logs.
 - User communication or gossip ensuring that all users have a shared view of the key.
 
 The precise external mechanism used here depends largely on the threat model. If there is a trusted
@@ -127,11 +128,11 @@ view of the server key. However, if this proxy is not trusted, operational risks
 - The proxy can give all users a key owned by the proxy, and either collude with the server to use this
   key or retroactively use this key to compromise user privacy when users later make use of the key.
 
-Mitigating these risks may require tamper-proof logs as in {{user-based}}.
+Mitigating these risks may require tamper-proof logs as in {{server-based}}.
 
-## Log-Based Discovery
+## Log-Based Key Discovery {#log-based}
 
-In this model, servers publish keys in a tamper-proof log similar to that of Certificate Transparency.
+In this model, servers publish keys in a tamper-proof log similar to that of Certificate Transparency {{!RFC6962}}.
 Users may then fetch keys directly from the server and subsequently verify their existence in the log.
 The log is operated and audited in such a way that the contents of the log are consistent for all users.
 Any system which depends on this type of system requires the log be autited or users have some other
@@ -140,13 +141,20 @@ ensure proactive security against malicious servers unless log participants acti
 This requirement may impede deployment in practice, given that no web browser checks
 SignedCertificateTimestamps before using (accepting as valid) a corresponding TLS certificate.
 
-## Anonymous System Discovery {#anon-discovery}
+## Anonymous System Key Discovery {#anon-discovery}
 
 In this model, users leverage an anonymity network such as Tor to fetch keys directly from servers
 over multiple vantage points. Depending on how clients fetch such keys from servers, it may become
 more difficult for servers to uniquely target individual users with unique keys without detection.
 This is especially true as the number of users of these anonymity networks increases. However, beyond
 Tor, there does not exist a special-purpose anonymity network for this purpose.
+
+## Minimum Validity Periods
+
+In addition to ensuring that there is one key at any time, or a limited number keys, any system
+needs to ensure that a server cannot rotate its keys too often in order to divide clients into
+smaller groups based on when keys are acquired.  Setting a minimum validity period limits the
+ability of a server to rotate keys, but also limits the rate of key rotation.
 
 # Future Work
 
