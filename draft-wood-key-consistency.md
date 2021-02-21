@@ -24,6 +24,8 @@ author:
 normative:
   RFC2119:
   RFC7748:
+
+informative:
   I-D.thomson-http-oblivious:
     title: "Oblivious HTTP"
     date: {DATE}
