@@ -2,9 +2,9 @@
 
 This is the working area for the individual Internet-Draft, "Key Consistency and Discovery".
 
-* [Editor's Copy](https://chris-wood.github.io/key-consitency/#go.draft-wood-key-consistency.html)
+* [Editor's Copy](https://chris-wood.github.io/key-consistency/#go.draft-wood-key-consistency.html)
 * [Individual Draft](https://tools.ietf.org/html/draft-wood-key-consistency)
-* [Compare Editor's Copy to Individual Draft](https://chris-wood.github.io/key-consitency/#go.draft-wood-key-consistency.diff)
+* [Compare Editor's Copy to Individual Draft](https://chris-wood.github.io/key-consistency/#go.draft-wood-key-consistency.diff)
 
 ## Building the Draft
 
@@ -21,4 +21,4 @@ This requires that you have the necessary software installed.  See
 ## Contributing
 
 See the
-[guidelines for contributions](https://github.com/chris-wood/key-consitency/blob/master/CONTRIBUTING.md).
+[guidelines for contributions](https://github.com/chris-wood/key-consistency/blob/master/CONTRIBUTING.md).
