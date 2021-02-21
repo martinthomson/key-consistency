@@ -13,6 +13,11 @@ pi: [toc, sortrefs, symrefs]
 
 author:
  -
+    ins: M. Thomson
+    name: Martin Thomson
+    org: Mozilla
+    email: mt@lowentropy.net
+ -
     ins: C. A. Wood
     name: Christopher A. Wood
     org: Cloudflare
