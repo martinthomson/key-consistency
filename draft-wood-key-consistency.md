@@ -22,24 +22,11 @@ author:
     email: caw@heapingbits.net
 
 normative:
-  RFC2119:
   RFC7748:
-
 informative:
-  I-D.thomson-http-oblivious:
-    title: "Oblivious HTTP"
-    date: {DATE}
-    seriesinfo:
-      Internet-Draft: draft-ietf-http-oblivious-latest
-    author:
-      -
-        ins: M.Thomson
-        name: Martin Thomson
-        org: Mozilla
-      -
-        ins: C.A.Wood
-        name: Christopher A. Wood
-        org: Cloudflare
+  ODOH: I-D.pauly-dprive-oblivious-doh
+  OHTTP: I-D.thomson-http-oblivious
+  PRIVACY-PASS: I-D.ietf-privacypass-protocol
 
 --- abstract
 
@@ -52,8 +39,8 @@ of open problems in this area.
 
 # Introduction
 
-Several proposed privacy-enhancing protocols such as Privacy Pass {{?I-D.ietf-privacypass-protocol}},
-Oblivious DoH {{?I-D.pauly-dprive-oblivious-doh}}, and Oblivious HTTP {{I-D.thomson-http-oblivious}}
+Several proposed privacy-enhancing protocols such as Privacy Pass {{PRIVACY-PASS}},
+Oblivious DoH {{ODOH}}, and Oblivious HTTP {{OHTTP}}
 require clients to obtain and use a public key for execution. For example, Privacy Pass public keys
 are used to privately obtain tokens for anonymous resumption. Oblivious DoH and HTTP both use public
 keys to encrypt messages to a particular server. In all cases, a common security goal is that recipients
