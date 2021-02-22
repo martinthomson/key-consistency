@@ -40,9 +40,22 @@ normative:
   RFC7748:
 informative:
   ODOH: I-D.pauly-dprive-oblivious-doh
-  OHTTP: I-D.thomson-http-oblivious
   PRIVACY-PASS: I-D.ietf-privacypass-protocol
   PRIVACY-PASS-ARCH: I-D.ietf-privacypass-architecture
+  OHTTP:
+    title: "Oblivious HTTP"
+    date: {DATE}
+    seriesinfo:
+      Internet-Draft: draft-ietf-http-oblivious-latest
+    author:
+      -
+        ins: M.Thomson
+        name: Martin Thomson
+        org: Mozilla
+      -
+        ins: C.A.Wood
+        name: Christopher A. Wood
+        org: Cloudflare
 
 --- abstract
 
