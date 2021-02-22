@@ -18,6 +18,11 @@ author:
     org: LIP Lisboa
     email: alex.davidson92@gmail.com
  -
+    ins: M. Finkel
+    name: Matthew Finkel
+    org: The Tor Project
+    email: sysrqb@torproject.org
+ -
     ins: M. Thomson
     name: Martin Thomson
     org: Mozilla
@@ -166,14 +171,17 @@ Tor, there does not exist a special-purpose anonymity network for this purpose.
 In this model, users query a database containing assertions that bind server names and keys. The assertions
 provided by this database are created by a coalition of entities that periodically agree on the correct
 binding of server names and key material. In this model the agreement is achieve via a consensus protocol,
-but the specific consensus protocol is dependent on the implementation. For privacy, users should download
-the entire database and query it locally. A database should be considered stale and re-fetch periodically,
-as well.
+but the specific consensus protocol is dependent on the implementation. For privacy, users should either
+download the entire database and query it locally, or remotely query the database using a private
+information retrieval (PIR) protocol. In the case where the database is downloaded locally, it should be
+considered stale and re-fetch periodically, as well.
 
-This model is appropriate in small scale deployments where the number of bindings in the database is much
-smaller than the number of users of the reliant system. In a reliant system with a large user base, this
-model imposes bandwidth costs on each user that may be impractical. In larger scale deployments, the
-short-comings of this model may be similar to {{log-based}}.
+When the entire database is downloaded, this model is appropriate in small scale deployments where the
+number of bindings in the database is much smaller than the number of users of the reliant system. In
+a reliant system with a large user base, this model imposes bandwidth costs on each user that may be
+impractical. In larger scale deployments, the short-comings of this model may be similar to {{log-based}}.
+
+If the database is small and users query it infrequently, retrieval techniques based on PIR may be viable.
 
 ## Minimum Validity Periods
 
