@@ -161,7 +161,7 @@ purpose system for transparency of opaque keys (or other application data).
 
 # Security Considerations {#sec}
 
-This document discusses several mdoels that systems might use to implement public key discovery
+This document discusses several models that systems might use to implement public key discovery
 while ensuring key consistency and correctness. It does not make any recommendations for such
 models as the best model depends on differing operational requirements and threat models.
 
