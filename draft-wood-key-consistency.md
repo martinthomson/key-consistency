@@ -161,6 +161,20 @@ more difficult for servers to uniquely target individual users with unique keys 
 This is especially true as the number of users of these anonymity networks increases. However, beyond
 Tor, there does not exist a special-purpose anonymity network for this purpose.
 
+## Consensus-based Key Discovery {#consensus-based}
+
+In this model, users query a database containing assertions that bind server names and keys. The assertions
+provided by this database are created by a coalition of entities that periodically agree on the correct
+binding of server names and key material. In this model the agreement is achieve via a consensus protocol,
+but the specific consensus protocol is dependent on the implementation. For privacy, users should download
+the entire database and query it locally. A database should be considered stale and re-fetch periodically,
+as well.
+
+This model is appropriate in small scale deployments where the number of bindings in the database is much
+smaller than the number of users of the reliant system. In a reliant system with a large user base, this
+model imposes bandwidth costs on each user that may be impractical. In larger scale deployments, the
+short-comings of this model may be similar to {{log-based}}.
+
 ## Minimum Validity Periods
 
 In addition to ensuring that there is one key at any time, or a limited number keys, any system
