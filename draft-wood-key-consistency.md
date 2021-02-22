@@ -13,6 +13,11 @@ pi: [toc, sortrefs, symrefs]
 
 author:
  -
+    ins: A. Davidson
+    name: Alex Davidson
+    org: LIP Lisboa
+    email: alex.davidson92@gmail.com
+ -
     ins: M. Thomson
     name: Martin Thomson
     org: Mozilla
@@ -32,6 +37,7 @@ informative:
   ODOH: I-D.pauly-dprive-oblivious-doh
   OHTTP: I-D.thomson-http-oblivious
   PRIVACY-PASS: I-D.ietf-privacypass-protocol
+  PRIVACY-PASS-ARCH: I-D.ietf-privacypass-architecture
 
 --- abstract
 
@@ -47,7 +53,7 @@ of open problems in this area.
 Several proposed privacy-enhancing protocols such as Privacy Pass {{PRIVACY-PASS}},
 Oblivious DoH {{ODOH}}, and Oblivious HTTP {{OHTTP}}
 require clients to obtain and use a public key for execution. For example, Privacy Pass public keys
-are used to privately obtain tokens for anonymous resumption. Oblivious DoH and HTTP both use public
+are used by clients for validating privately issued tokens for anonymous session resumption. Oblivious DoH and HTTP both use public
 keys to encrypt messages to a particular server. In all cases, a common security goal is that recipients
 cannot link usage of a public key to a specific (set of) user(s). In other words, all users of a public
 key should belong to the same anonymity set, and an attacker should not be able to actively reduce the
@@ -71,7 +77,7 @@ reasons. Specifically, all users with a consistent key represent an anonymity se
 the key in that set is indistinguishable from the rest. An attacker that can actively cause inconsistent
 views of keys can therefore compromise user privacy.
 
-An attacker may separately cause privacy problems by forcing an users in ananonymity set to use
+An attacker may separately cause privacy problems by forcing an users in an anonymity set to use
 an incorrect key. Informally, a key is correct if it belongs to the intended server and is not otherwise
 available to an attacker. In a public key setting, this means that the public key is that which
 is owned by the corresponding owner, and only that owner has access to the private key. An attacker
@@ -84,7 +90,7 @@ mechanics or controls to ensure that other users have a different key. However, 
 is not viable in practice. If the corresponding key is compromised, the system fails. Rotation must
 therefore be supported, and in doing so, users need some mechanism to ensure that rotated newly rotated
 keys are consistent and correct. Operationally, servers rotating keys may likely need to accommodate
-distribuetd system state synchronization issues without sacrificing availability. Some systems and protocols
+distributed system state-synchronization issues without sacrificing availability. Some systems and protocols
 may choose to prioritize strong consistency over availability, but this document assumes that availability
 is preferred to consistency.
 
@@ -92,9 +98,9 @@ is preferred to consistency.
 
 There are a variety of ways in systems may build systems for ensuring key consistency and correctness,
 ranging in operational complexity to ease-of-implementation. In this section, we survey a number of
-possible solutions. The viaibility of each varies depending on the applicable threat model, external
+possible solutions. The viability of each varies depending on the applicable threat model, external
 dependencies, and overall system requirements. We do not include the fixed public key model from
-{{reqs}}, as this is likely not a viable solution for systems and protocls in practice. In all scenarios,
+{{reqs}}, as this is likely not a viable solution for systems and protocols in practice. In all scenarios,
 the server corresponding to the desired key is considered malicious.
 
 ## Server-Provided Key Discovery {#server-based}
@@ -122,14 +128,14 @@ view of the server key. However, if this proxy is not trusted, operational risks
 - The proxy can give all users a key owned by the proxy, and either collude with the server to use this
   key or retroactively use this key to compromise user privacy when users later make use of the key.
 
-Mitigating these risks may require tamper-proof logs as in {{server-based}}.
+Mitigating these risks may require tamper-proof logs as in {{server-based}}, or via user gossip protocols.
 
 ## Log-Based Key Discovery {#log-based}
 
 In this model, servers publish keys in a tamper-proof log similar to that of Certificate Transparency {{!RFC6962}}.
 Users may then fetch keys directly from the server and subsequently verify their existence in the log.
 The log is operated and audited in such a way that the contents of the log are consistent for all users.
-Any system which depends on this type of system requires the log be autited or users have some other
+Any system which depends on this type of system requires the log be audited or users have some other
 mechanism for checking their view of the log state (gossiping). However, this type of system does not
 ensure proactive security against malicious servers unless log participants actively check log proofs.
 This requirement may impede deployment in practice, given that no web browser checks
@@ -147,8 +153,9 @@ Tor, there does not exist a special-purpose anonymity network for this purpose.
 
 In addition to ensuring that there is one key at any time, or a limited number keys, any system
 needs to ensure that a server cannot rotate its keys too often in order to divide clients into
-smaller groups based on when keys are acquired.  Setting a minimum validity period limits the
-ability of a server to rotate keys, but also limits the rate of key rotation.
+smaller groups based on when keys are acquired. Such considerations are already highlighted within the
+Privacy Pass ecosystem, more discussion can be found at {{PRIVACY-PASS-ARCH}}. Setting a minimum validity
+period limits the ability of a server to rotate keys, but also limits the rate of key rotation.
 
 # Future Work
 
@@ -161,7 +168,7 @@ purpose system for transparency of opaque keys (or other application data).
 
 # Security Considerations {#sec}
 
-This document discusses several mdoels that systems might use to implement public key discovery
+This document discusses several models that systems might use to implement public key discovery
 while ensuring key consistency and correctness. It does not make any recommendations for such
 models as the best model depends on differing operational requirements and threat models.
 
