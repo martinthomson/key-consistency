@@ -68,6 +68,18 @@ solutions to this problem.
 
 {::boilerplate bcp14}
 
+# Terminology
+
+This document defines the following terms:
+
+Key Consistency and Correctness System (KCCS):
+: A mechanism for providing clients with a consistent view of cryptographic key material.
+
+Reliant System:
+: A system that embeds one or more key consistency and correctness systems.
+
+The KCCS's consistency model is dependent on the implementation and reliant system's threat model.
+
 # Core Requirements {#reqs}
 
 Privacy-focused protocols which rely on widely shared public keys typically require keys be consistent
@@ -77,18 +89,18 @@ reasons. Specifically, all users with a consistent key represent an anonymity se
 the key in that set is indistinguishable from the rest. An attacker that can actively cause inconsistent
 views of keys can therefore compromise user privacy.
 
-An attacker may separately cause privacy problems by forcing an users in an anonymity set to use
+An attacker may separately reduce a user's privacy by forcing them into a smaller anonymity set by using
 an incorrect key. Informally, a key is correct if it belongs to the intended server and is not otherwise
 available to an attacker. In a public key setting, this means that the public key is that which
 is owned by the corresponding owner, and only that owner has access to the private key. An attacker
 that can actively cause users to make use of incorrect keys may be able to compromise user privacy.
 
-Systems must also consider agility when trying to satisfy these requirements. A naive solution to
+Reliant systems must also consider agility when trying to satisfy these requirements. A naive solution to
 ensuring consistent and correct keys is to only use a single, fixed key pair for the entirety of
 the system. Users can then embed this key into software or elsewhere as needed, without any additional
 mechanics or controls to ensure that other users have a different key. However, this solution clearly
 is not viable in practice. If the corresponding key is compromised, the system fails. Rotation must
-therefore be supported, and in doing so, users need some mechanism to ensure that rotated newly rotated
+therefore be supported, and in doing so, users need some mechanism to ensure that newly rotated
 keys are consistent and correct. Operationally, servers rotating keys may likely need to accommodate
 distributed system state-synchronization issues without sacrificing availability. Some systems and protocols
 may choose to prioritize strong consistency over availability, but this document assumes that availability
@@ -96,10 +108,10 @@ is preferred to consistency.
 
 # Deploying Consistency and Correctness
 
-There are a variety of ways in systems may build systems for ensuring key consistency and correctness,
+There are a variety of ways in which reliant systems may build _key consistency and correct systems_ (KCCS),
 ranging in operational complexity to ease-of-implementation. In this section, we survey a number of
 possible solutions. The viability of each varies depending on the applicable threat model, external
-dependencies, and overall system requirements. We do not include the fixed public key model from
+dependencies, and overall reliant system's requirements. We do not include the fixed public key model from
 {{reqs}}, as this is likely not a viable solution for systems and protocols in practice. In all scenarios,
 the server corresponding to the desired key is considered malicious.
 
@@ -110,7 +122,7 @@ of this solution depend on external mechanisms in place to ensure consistency or
 any such mechanisms, servers can produce unique keys for users without detection. External mechanisms
 to ensure consistency here might include, though are not limited to:
 
-- Presenting a signed assertion from a trusted entity that the key is unique.
+- Presenting a signed assertion from a trusted entity that the key is correct.
 - Presenting proof that the key is present in some tamper-proof log, similar to Certificate
   Transparency ({{!RFC6962}}) logs.
 - User communication or gossip ensuring that all users have a shared view of the key.
@@ -135,7 +147,7 @@ Mitigating these risks may require tamper-proof logs as in {{server-based}}, or 
 In this model, servers publish keys in a tamper-proof log similar to that of Certificate Transparency {{!RFC6962}}.
 Users may then fetch keys directly from the server and subsequently verify their existence in the log.
 The log is operated and audited in such a way that the contents of the log are consistent for all users.
-Any system which depends on this type of system requires the log be audited or users have some other
+Any reliant system which depends on this type of KCCS requires the log be audited or users have some other
 mechanism for checking their view of the log state (gossiping). However, this type of system does not
 ensure proactive security against malicious servers unless log participants actively check log proofs.
 This requirement may impede deployment in practice, given that no web browser checks
