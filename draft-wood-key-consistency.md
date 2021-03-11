@@ -133,12 +133,22 @@ dependencies, and overall reliant system's requirements. We do not include the f
 {{reqs}}, as this is likely not a viable solution for systems and protocols in practice. In all scenarios,
 the server corresponding to the desired key is considered malicious.
 
-## Server-Provided Key Discovery {#server-based}
+## Direct Discovery {#server-based}
 
-In this model, users would directly query servers for their corresponding public key. The properties
-of this solution depend on external mechanisms in place to ensure consistency or correctness. Absent
-any such mechanisms, servers can produce unique keys for users without detection. External mechanisms
-to ensure consistency here might include, though are not limited to:
+In this model, users would directly query servers for their corresponding public key, as shown below.
+
+~~~
+┌──────────┐              ┌─────────┐
+│          │              │         │
+│  Client  ├──────────────► Server  │
+│          │              │         │
+└──────────┘              └─────────┘
+~~~
+{: #fig-disc-direct title="Direct Discovery Example"}
+
+The properties of this solution depend on external mechanisms in place to ensure consistency or
+correctness. Absent any such mechanisms, servers can produce unique keys for users without detection.
+External mechanism to ensure consistency here might include, though are not limited to:
 
 - Presenting a signed assertion from a trusted entity that the key is correct.
 - Presenting proof that the key is present in some tamper-proof log, similar to Certificate
@@ -148,11 +158,37 @@ to ensure consistency here might include, though are not limited to:
 The precise external mechanism used here depends largely on the threat model. If there is a trusted
 external log for keys, this may be a viable solution.
 
-## Proxy-Based Key Discovery {#proxy-based}
+## Single Prox Discovery {#proxy-based}
 
-In this model, there exists a proxy that fetches keys from servers on behalf of multiple users. If this
-proxy is trusted, then all users which request a key from this server are assured they have a consistent
-view of the server key. However, if this proxy is not trusted, operational risks may arise:
+In this model, there exists a proxy that fetches keys from servers on behalf of multiple users, as shown
+below.
+
+~~~
+┌──────────┐
+│          │
+│  Client  ├──────────┐
+│          │          │
+└──────────┘          │
+                      │
+┌──────────┐         ┌▼─────────┐      ┌─────────┐
+│          │         │          │      │         │
+│  Client  ├─────────►  Proxy   --─────► Server  │
+│          │         │          │      │         │
+└──────────┘         └▲─────────┘      └─────────┘
+      x               │
+      x               │
+      x               │
+      x               │
+┌──────────┐          │
+│          │          │
+│  Client  ├──────────┘
+│          │
+└──────────┘
+~~~
+{: #fig-disc-proxy title="Single Proxy Discovery Example"}
+
+If this proxy is trusted, then all users which request a key from this server are assured they have
+a consistent view of the server key. However, if this proxy is not trusted, operational risks may arise:
 
 - The proxy can collude with the server to give per-user keys to clients.
 - The proxy can give all users a key owned by the proxy, and either collude with the server to use this
@@ -160,43 +196,94 @@ view of the server key. However, if this proxy is not trusted, operational risks
 
 Mitigating these risks may require tamper-proof logs as in {{server-based}}, or via user gossip protocols.
 
-## Log-Based Key Discovery {#log-based}
+## Multi-Proxy Discovery {#anon-discovery}
 
-In this model, servers publish keys in a tamper-proof log similar to that of Certificate Transparency {{!RFC6962}}.
-Users may then fetch keys directly from the server and subsequently verify their existence in the log.
-The log is operated and audited in such a way that the contents of the log are consistent for all users.
-Any reliant system which depends on this type of KCCS requires the log be audited or users have some other
-mechanism for checking their view of the log state (gossiping). However, this type of system does not
-ensure proactive security against malicious servers unless log participants actively check log proofs.
-This requirement may impede deployment in practice, given that no web browser checks
-SignedCertificateTimestamps before using (accepting as valid) a corresponding TLS certificate.
+In this model, users leverage multiple, non-colluding proxies to fetch keys from servers, as shown below.
 
-## Anonymous System Key Discovery {#anon-discovery}
+~~~
+                     ┌──────────┐
+                     │          │
+     ┌───────────────►  Proxy   ├───────────┐
+     │               │          │           │
+     │               └──────────┘           │
+     │                                      │
+┌────┴─────┐         ┌──────────┐      ┌────▼────┐
+│          │         │          │      │         │
+│  Client  ├─────────►  Proxy   ├──────► Server  │
+│          │         │          │      │         │
+└─────┬────┘         └──────────┘      └────▲────┘
+      │                    x                │
+      │                    x                │
+      │                    x                │
+      │              ┌──────────┐           │
+      │              │          │           │
+      └──────────────►  Proxy   ├───────────┘
+                     │          │
+                     └──────────┘
+~~~
+{: #fig-disc-multi-proxy title="Multi-Proxy Discovery Example"}
 
-In this model, users leverage an anonymity network such as Tor to fetch keys directly from servers
-over multiple vantage points. Depending on how clients fetch such keys from servers, it may become
+These proxies are ideally spread across multiple vantage points. Examples of proxies include anonymous
+systems such as Tor. Depending on how clients fetch such keys from servers, it may become
 more difficult for servers to uniquely target individual users with unique keys without detection.
 This is especially true as the number of users of these anonymity networks increases. However, beyond
 Tor, there does not exist a special-purpose anonymity network for this purpose.
 
-## Consensus-based Key Discovery {#consensus-based}
+## Database Discovery {#external-db-based}
 
-In this model, users query a database containing assertions that bind server names and keys. The assertions
-provided by this database are created by a coalition of entities that periodically agree on the correct
-binding of server names and key material. In this model the agreement is achieve via a consensus protocol,
-but the specific consensus protocol is dependent on the implementation. For privacy, users should either
-download the entire database and query it locally, or remotely query the database using a private
-information retrieval (PIR) protocol. In the case where the database is downloaded locally, it should be
-considered stale and re-fetch periodically, as well.
+In this model, servers publish keys in an external database and clients fetch keys from the database, as shown below.
 
-When the entire database is downloaded, this model is appropriate in small scale deployments where the
-number of bindings in the database is much smaller than the number of users of the reliant system. In
-a reliant system with a large user base, this model imposes bandwidth costs on each user that may be
-impractical. In larger scale deployments, the short-comings of this model may be similar to {{log-based}}.
+~~~
+┌──────────┐
+│          │
+│  Client  ├───────────┐
+│          │           │
+└──────────┘           │
+                       │
+┌──────────┐         ┌─▼────────┐      ┌─────────┐
+│          │         │          │      │         │
+│  Client  ├─────────► Database ◄──────┤ Server  │
+│          │         │          │      │         │
+└──────────┘         └─▲────────┘      └─────────┘
+     x                 │
+     x                 │
+     x                 │
+┌──────────┐           │
+│          │           │
+│  Client  ├───────────┘
+│          │
+└──────────┘
+~~~
+{: #fig-disc-database title="Database Discovery Example"}
 
-If the database is small and users query it infrequently, retrieval techniques based on PIR may be viable.
+The database is expected to have a table that asserts mappings between server names and keys. Examples
+of such databases are as follows:
 
-## Minimum Validity Periods
+- An append-only, audited table similar to that of Certificate Transparency {{!RFC6962}}. The log is operated and
+  audited in such a way that the contents of the log are consistent for all users. Any reliant system
+  which depends on this type of KCCS requires the log be audited or users have some other mechanism for
+  checking their view of the log state (gossiping). However, this type of system does not ensure proactive
+  security against malicious servers unless log participants actively check log proofs. This requirement
+  may impede deployment in practice, given that no web browser checks SignedCertificateTimestamps before
+  using (accepting as valid) a corresponding TLS certificate.
+
+- A consensus-based table whose assertions are created by a coalition of entities that periodically agree on
+  the correct binding of server names and key material. In this model the agreement is achieve via a consensus
+  protocol, but the specific consensus protocol is dependent on the implementation. For privacy, users should
+  either download the entire database and query it locally, or remotely query the database using a private
+  information retrieval (PIR) protocol. In the case where the database is downloaded locally, it should be
+  considered stale and re-fetch periodically, as well.
+
+  When the entire database is downloaded, this model is appropriate in small scale deployments where the
+  number of bindings in the database is much smaller than the number of users of the reliant system. In
+  a reliant system with a large user base, this model imposes bandwidth costs on each user that may be
+  impractical. In larger scale deployments, the short-comings of this model may be similar to log-based
+  tables.
+
+- A Private Information Retrieval (PIR) table. If the database is small and users query it infrequently,
+  retrieval techniques based on PIR may be viable.
+
+# Minimum Validity Periods
 
 In addition to ensuring that there is one key at any time, or a limited number keys, any system
 needs to ensure that a server cannot rotate its keys too often in order to divide clients into
