@@ -158,7 +158,7 @@ External mechanism to ensure consistency here might include, though are not limi
 The precise external mechanism used here depends largely on the threat model. If there is a trusted
 external log for keys, this may be a viable solution.
 
-## Single Prox Discovery {#proxy-based}
+## Single Proxy Discovery {#proxy-based}
 
 In this model, there exists a proxy that fetches keys from servers on behalf of multiple users, as shown
 below.
