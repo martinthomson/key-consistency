@@ -268,7 +268,7 @@ of such databases are as follows:
   using (accepting as valid) a corresponding TLS certificate.
 
 - A consensus-based table whose assertions are created by a coalition of entities that periodically agree on
-  the correct binding of server names and key material. In this model the agreement is achieve via a consensus
+  the correct binding of server names and key material. In this model the agreement is achieved via a consensus
   protocol, but the specific consensus protocol is dependent on the implementation. For privacy, users should
   either download the entire database and query it locally, or remotely query the database using a private
   information retrieval (PIR) protocol. In the case where the database is downloaded locally, it should be
