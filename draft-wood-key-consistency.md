@@ -263,8 +263,9 @@ of such databases are as follows:
   which depends on this type of KCCS requires the log be audited or users have some other mechanism for
   checking their view of the log state (gossiping). However, this type of system does not ensure proactive
   security against malicious servers unless log participants actively check log proofs. This requirement
-  may impede deployment in practice, given that no web browser checks SignedCertificateTimestamps before
-  using (accepting as valid) a corresponding TLS certificate.
+  may impede deployment in practice. Experience with Certificate Transparency shows 
+  that most implementations have chosen not to check SignedCertificateTimestamps before
+  using (that is, accepting as valid) a corresponding TLS certificate.
 
 - A consensus-based table whose assertions are created by a coalition of entities that periodically agree on
   the correct binding of server names and key material. In this model the agreement is achieved via a consensus
