@@ -280,8 +280,8 @@ of such databases are as follows:
   impractical. In larger scale deployments, the short-comings of this model may be similar to log-based
   tables.
 
-- A Private Information Retrieval (PIR) table. If the database is small and users query it infrequently,
-  retrieval techniques based on PIR may be viable.
+If the table is small and queried infrequently, clients can additionally hide their query from the database,
+which may collude with the server, using Private Information Retrieval (PIR) or similar techniques.
 
 # Minimum Validity Periods
 
