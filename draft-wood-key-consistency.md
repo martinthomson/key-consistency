@@ -269,19 +269,12 @@ of such databases are as follows:
 
 - A consensus-based table whose assertions are created by a coalition of entities that periodically agree on
   the correct binding of server names and key material. In this model the agreement is achieved via a consensus
-  protocol, but the specific consensus protocol is dependent on the implementation. For privacy, users should
-  either download the entire database and query it locally, or remotely query the database using a private
-  information retrieval (PIR) protocol. In the case where the database is downloaded locally, it should be
-  considered stale and re-fetch periodically, as well.
+  protocol, but the specific consensus protocol is dependent on the implementation.
 
-  When the entire database is downloaded, this model is appropriate in small scale deployments where the
-  number of bindings in the database is much smaller than the number of users of the reliant system. In
-  a reliant system with a large user base, this model imposes bandwidth costs on each user that may be
-  impractical. In larger scale deployments, the short-comings of this model may be similar to log-based
-  tables.
-
-If the table is small and queried infrequently, clients can additionally hide their query from the database,
-which may collude with the server, using Private Information Retrieval (PIR) or similar techniques.
+For privacy, users should either download the entire database and query it locally, or remotely query the database
+using a private information retrieval (PIR) protocol. In the case where the database is downloaded locally, it
+should be considered stale and re-fetch periodically. Downloading the entire database works best if there are
+a small number of entries, as it does not otherwise impose bandwidth costs on each client that may be impractical.
 
 # Minimum Validity Periods
 
