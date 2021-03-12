@@ -263,7 +263,7 @@ of such databases are as follows:
   which depends on this type of KCCS requires the log be audited or users have some other mechanism for
   checking their view of the log state (gossiping). However, this type of system does not ensure proactive
   security against malicious servers unless log participants actively check log proofs. This requirement
-  may impede deployment in practice. Experience with Certificate Transparency shows 
+  may impede deployment in practice. Experience with Certificate Transparency shows
   that most implementations have chosen not to check SignedCertificateTimestamps before
   using (that is, accepting as valid) a corresponding TLS certificate.
 
@@ -273,10 +273,12 @@ of such databases are as follows:
 
 For privacy, users should either download the entire database and query it locally, or remotely query the database
 using a private information retrieval (PIR) protocol. In the case where the database is downloaded locally, it
-should be considered stale and re-fetch periodically. Downloading the entire database works best if there are
-a small number of entries, as it does not otherwise impose bandwidth costs on each client that may be impractical.
+should be considered stale and re-fetch periodically. The frequency of such updates can likely be infrequent
+in practice, as frequent key updates or rotations may affect privacy; see {{validity-periods}} for details.
+Downloading the entire database works best if there are a small number of entries, as it does not otherwise
+impose bandwidth costs on each client that may be impractical.
 
-# Minimum Validity Periods
+# Minimum Validity Periods {#validity-periods}
 
 In addition to ensuring that there is one key at any time, or a limited number keys, any system
 needs to ensure that a server cannot rotate its keys too often in order to divide clients into
