@@ -1,0 +1,649 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2021-03-21T00:14:55.317363+00:00",
+  "repo": "chris-wood/key-consistency",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTc3MTk4MDE5",
+      "title": "Some suggestions",
+      "url": "https://github.com/chris-wood/key-consistency/pull/1",
+      "state": "MERGED",
+      "author": "martinthomson",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "user-based is really server-based\r\n\r\nadd trusted assertion as one of the means of diversifying trust\r\n\r\nadd time-based considerations and minimum validity/rotation period",
+      "createdAt": "2021-02-21T23:04:09Z",
+      "updatedAt": "2021-02-21T23:31:50Z",
+      "baseRepository": "chris-wood/key-consistency",
+      "baseRefName": "master",
+      "baseRefOid": "a21d55b3d9c349376ef8a04041e0f75559790ae4",
+      "headRepository": null,
+      "headRefName": "proposals",
+      "headRefOid": "0e2ebc4634396fc1fd057c694658da5a0960361f",
+      "closedAt": "2021-02-21T23:31:50Z",
+      "mergedAt": "2021-02-21T23:31:50Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "b0448b196718aa99df0c6b576674b0d66cbd8476"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTk0ODk1MzYz",
+          "commit": {
+            "abbreviatedOid": "0e2ebc4"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2021-02-21T23:31:46Z",
+          "updatedAt": "2021-02-21T23:31:46Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTc3MTk4NDU3",
+      "title": "Fix references",
+      "url": "https://github.com/chris-wood/key-consistency/pull/2",
+      "state": "MERGED",
+      "author": "martinthomson",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2021-02-21T23:06:56Z",
+      "updatedAt": "2021-02-21T23:31:04Z",
+      "baseRepository": "chris-wood/key-consistency",
+      "baseRefName": "master",
+      "baseRefOid": "a21d55b3d9c349376ef8a04041e0f75559790ae4",
+      "headRepository": null,
+      "headRefName": "2119",
+      "headRefOid": "5759ee28edf05346d6be304cfcfa01f60bd3f855",
+      "closedAt": "2021-02-21T23:31:04Z",
+      "mergedAt": "2021-02-21T23:31:04Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "ee3b01897fa59e100b53f5f95f5ba74b55d2bdc3"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTk0ODk1Mjkz",
+          "commit": {
+            "abbreviatedOid": "5759ee2"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2021-02-21T23:31:00Z",
+          "updatedAt": "2021-02-21T23:31:00Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTc3MjAyNjk4",
+      "title": "Add MT.",
+      "url": "https://github.com/chris-wood/key-consistency/pull/3",
+      "state": "MERGED",
+      "author": "chris-wood",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2021-02-21T23:33:13Z",
+      "updatedAt": "2021-02-21T23:37:39Z",
+      "baseRepository": "chris-wood/key-consistency",
+      "baseRefName": "master",
+      "baseRefOid": "b0448b196718aa99df0c6b576674b0d66cbd8476",
+      "headRepository": "chris-wood/key-consistency",
+      "headRefName": "caw/add-mt",
+      "headRefOid": "def4c8e686434e1046a11d3722acf0d2905369f4",
+      "closedAt": "2021-02-21T23:37:39Z",
+      "mergedAt": "2021-02-21T23:37:39Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "306c50ceecd5b4c47a053b08fe3ec313f0491875"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTk0ODk1NjI5",
+          "commit": {
+            "abbreviatedOid": "def4c8e"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Sure, if you like.",
+          "createdAt": "2021-02-21T23:33:57Z",
+          "updatedAt": "2021-02-21T23:33:57Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTc3NzQ0NjA2",
+      "title": "Extra details around privacy pass, and some typos",
+      "url": "https://github.com/chris-wood/key-consistency/pull/4",
+      "state": "MERGED",
+      "author": "alxdavids",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I added some very small clarifications around privacy pass related things, and fixed some small typos. Overall, I think this resource will really helpful for guiding these discussions in other WGs. I think it would be worthwhile raising this document at the PP WG meeting as part of the issuer selection/centralisation theme.\r\n\r\n(@chris-wood as you mentioned out-of-band, I've also added myself as an author. If you'd prefer me to have some less formalised contributing arrangement, I'd still be happy to help out :+1:) ",
+      "createdAt": "2021-02-22T15:54:18Z",
+      "updatedAt": "2021-02-22T16:04:09Z",
+      "baseRepository": "chris-wood/key-consistency",
+      "baseRefName": "master",
+      "baseRefOid": "306c50ceecd5b4c47a053b08fe3ec313f0491875",
+      "headRepository": "chris-wood/key-consistency",
+      "headRefName": "alxdavids/pp-edits",
+      "headRefOid": "a2a1770c2c713396c52b91c48a615eddd1d90e4c",
+      "closedAt": "2021-02-22T16:04:09Z",
+      "mergedAt": "2021-02-22T16:04:09Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "3f73eda01eb28ed1f099cb47baacedb68bcfc441"
+      },
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "body": "Team effort! Thank you!",
+          "createdAt": "2021-02-22T16:04:06Z",
+          "updatedAt": "2021-02-22T16:04:06Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 5,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTc3OTc0ODc4",
+      "title": "Minor edits and adding Consensus-based model",
+      "url": "https://github.com/chris-wood/key-consistency/pull/5",
+      "state": "CLOSED",
+      "author": "sysrqb",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2021-02-22T22:05:50Z",
+      "updatedAt": "2021-02-22T23:02:53Z",
+      "baseRepository": "chris-wood/key-consistency",
+      "baseRefName": "master",
+      "baseRefOid": "3f73eda01eb28ed1f099cb47baacedb68bcfc441",
+      "headRepository": null,
+      "headRefName": "initialedits_00",
+      "headRefOid": "b28b389d3730c5fd2afe7245a19dc4e739ddcadc",
+      "closedAt": "2021-02-22T23:02:53Z",
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTk1ODMzNjQ3",
+          "commit": {
+            "abbreviatedOid": "a31c0cb"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "LGTM -- @sysrqb, do you want to add yourself as an author?",
+          "createdAt": "2021-02-22T22:12:55Z",
+          "updatedAt": "2021-02-22T22:12:55Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTc4MDAyMDQx",
+      "title": "Minor edits and adding Consensus-based model",
+      "url": "https://github.com/chris-wood/key-consistency/pull/6",
+      "state": "MERGED",
+      "author": "sysrqb",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Replaced #5 ",
+      "createdAt": "2021-02-22T23:01:54Z",
+      "updatedAt": "2021-02-22T23:05:15Z",
+      "baseRepository": "chris-wood/key-consistency",
+      "baseRefName": "master",
+      "baseRefOid": "3f73eda01eb28ed1f099cb47baacedb68bcfc441",
+      "headRepository": "sysrqb/key-consistency-1",
+      "headRefName": "initialedits_01",
+      "headRefOid": "b28b389d3730c5fd2afe7245a19dc4e739ddcadc",
+      "closedAt": "2021-02-22T23:05:14Z",
+      "mergedAt": "2021-02-22T23:05:14Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "b0fe7ab734cf25b6758b24cd1fc68246ec4a9229"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTk1ODY2NTU4",
+          "commit": {
+            "abbreviatedOid": "b28b389"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2021-02-22T23:05:10Z",
+          "updatedAt": "2021-02-22T23:05:10Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTkwOTM3NzIy",
+      "title": "Rearrange and collapse similar discovery mechanisms.",
+      "url": "https://github.com/chris-wood/key-consistency/pull/7",
+      "state": "MERGED",
+      "author": "chris-wood",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2021-03-11T15:08:43Z",
+      "updatedAt": "2021-03-19T16:01:36Z",
+      "baseRepository": "chris-wood/key-consistency",
+      "baseRefName": "master",
+      "baseRefOid": "3cdbe68cbf091528764e9255efba3f348191042f",
+      "headRepository": "chris-wood/key-consistency",
+      "headRefName": "caw/restructure-and-collapse",
+      "headRefOid": "ce99e99c87b52eb83e0dc8fa8a2cda307bf507f4",
+      "closedAt": "2021-03-19T16:01:36Z",
+      "mergedAt": "2021-03-19T16:01:36Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "b62a476cafe13c5342d50e1f9348f3990000e020"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjA5ODgyNjU0",
+          "commit": {
+            "abbreviatedOid": "9a78907"
+          },
+          "author": "alxdavids",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-11T15:22:02Z",
+          "updatedAt": "2021-03-11T15:24:26Z",
+          "comments": [
+            {
+              "originalPosition": 37,
+              "body": "```suggestion\r\n## Single Proxy Discovery {#proxy-based}\r\n```",
+              "createdAt": "2021-03-11T15:22:02Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            },
+            {
+              "originalPosition": 192,
+              "body": "I'm not sure how this is different from the previous example?",
+              "createdAt": "2021-03-11T15:24:19Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjA5ODkzOTIw",
+          "commit": {
+            "abbreviatedOid": "b265787"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-11T15:31:08Z",
+          "updatedAt": "2021-03-11T15:31:09Z",
+          "comments": [
+            {
+              "originalPosition": 192,
+              "body": "Fair point -- PIR is more about how one *accesses* the table, rather than the contents of the table itself. We could maybe pull PIR out into its own discovery mechanism, then? Not sure.",
+              "createdAt": "2021-03-11T15:31:09Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjEwMTExNjcx",
+          "commit": {
+            "abbreviatedOid": "b265787"
+          },
+          "author": "sysrqb",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-11T18:46:21Z",
+          "updatedAt": "2021-03-11T18:59:45Z",
+          "comments": [
+            {
+              "originalPosition": 180,
+              "body": "Small nit: s/achieve/achieved/",
+              "createdAt": "2021-03-11T18:46:21Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            },
+            {
+              "originalPosition": 192,
+              "body": "The original goal was describing how to safely query a database either locally or remotely, where the client does not leak/reveal to a third-party which entry they want from the database. These two paragraphs were focused on the trade-off of the two solutions. However, in both of these designs, an entry includes some guarantee that it was considered \"correct\" by whatever-consensus-protocol was used (maybe multiple signatures, or a threshold signature, or another mechanism entirely).\r\n\r\nWith that being said, \"a third-party database\" could be broken out into a separate discovery mechanism, like \"Indirect Discovery\" :) And I think this would have roughly the same criteria as \"Direct Discovery\".",
+              "createdAt": "2021-03-11T18:55:39Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjEwMTg0MTkx",
+          "commit": {
+            "abbreviatedOid": "b265787"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-11T20:14:19Z",
+          "updatedAt": "2021-03-11T20:14:20Z",
+          "comments": [
+            {
+              "originalPosition": 180,
+              "body": "```suggestion\r\n  the correct binding of server names and key material. In this model the agreement is achieved via a consensus\r\n```",
+              "createdAt": "2021-03-11T20:14:19Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjEwMTg0OTQ0",
+          "commit": {
+            "abbreviatedOid": "b265787"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-11T20:15:20Z",
+          "updatedAt": "2021-03-11T20:15:21Z",
+          "comments": [
+            {
+              "originalPosition": 192,
+              "body": "How is \"indirect discovery\" different from \"database discovery\"? (I like your term *a lot* more!)",
+              "createdAt": "2021-03-11T20:15:20Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjEwMTk5MjM3",
+          "commit": {
+            "abbreviatedOid": "44bd1ca"
+          },
+          "author": "sysrqb",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-11T20:33:17Z",
+          "updatedAt": "2021-03-11T20:33:17Z",
+          "comments": [
+            {
+              "originalPosition": 192,
+              "body": "Ah! That's a really good question. I guess I forgot these were all combined under a single \"Database Discovery\" model, and I think they are not different :slightly_smiling_face:\r\n\r\nI guess I could be clearer by saying PIR fits under \"consensus-based\" and \"trusted third-party\"? For consensus-based, we have the current text. For \"third-party\" we have basically \"single-proxy discovery\" as above except the \"proxy\" only provides the key and then the client connects to the destination server through another path (directly or another proxy or however else).",
+              "createdAt": "2021-03-11T20:33:17Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjEwMjAxNDc4",
+          "commit": {
+            "abbreviatedOid": "44bd1ca"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-11T20:36:07Z",
+          "updatedAt": "2021-03-11T20:36:08Z",
+          "comments": [
+            {
+              "originalPosition": 192,
+              "body": "Yeah, that might work. Let me give that a shot.",
+              "createdAt": "2021-03-11T20:36:07Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjEwNDAyOTI0",
+          "commit": {
+            "abbreviatedOid": "d0e69d8"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-12T02:29:12Z",
+          "updatedAt": "2021-03-12T02:29:12Z",
+          "comments": [
+            {
+              "originalPosition": 192,
+              "body": "@sysrqb okay, rewritten somewhat. The PIR text now applies to a generic database, as intended (I think). What do you think?",
+              "createdAt": "2021-03-12T02:29:12Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjEwNDQ0MjA0",
+          "commit": {
+            "abbreviatedOid": "d0e69d8"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-12T04:36:10Z",
+          "updatedAt": "2021-03-12T04:48:43Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "Maybe use an ellipsis (\u2026) here instead?  ",
+              "createdAt": "2021-03-12T04:36:11Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            },
+            {
+              "originalPosition": 51,
+              "body": "```suggestion\r\n\u2502  Client  \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba  Proxy   \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u25ba Server  \u2502\r\n```",
+              "createdAt": "2021-03-12T04:36:40Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            },
+            {
+              "originalPosition": 55,
+              "body": "```suggestion\r\n```\r\nThree should do.",
+              "createdAt": "2021-03-12T04:38:11Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            },
+            {
+              "originalPosition": 177,
+              "body": "```suggestion\r\n  may impede deployment in practice. Experience with Certificate Transparency shows \r\n  that most implementations have chosen not to check SignedCertificateTimestamps before\r\n  using (that is, accepting as valid) a corresponding TLS certificate.\r\n```",
+              "createdAt": "2021-03-12T04:42:30Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            },
+            {
+              "originalPosition": 184,
+              "body": "A forward reference to the next section might be OK.  That is, there is no need for the re-retrieval period to be short as new keys cannot be added very quickly.",
+              "createdAt": "2021-03-12T04:45:32Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            },
+            {
+              "originalPosition": 189,
+              "body": "I'm not sure that having a large number of users is a particular problem here based on our experience with CRLite and other such things.  As the update period can be relatively long, the cost of periodic updates should be manageable.  At most, you are talking about key record updates that occur on a similar period to software update checks (assuming reasonable practices there also).",
+              "createdAt": "2021-03-12T04:47:52Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            },
+            {
+              "originalPosition": 193,
+              "body": "You already talked about PIR.  Maybe reconcile the two somehow.",
+              "createdAt": "2021-03-12T04:48:39Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjEwOTI3NzM2",
+          "commit": {
+            "abbreviatedOid": "4097d0d"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-12T16:00:48Z",
+          "updatedAt": "2021-03-12T16:00:48Z",
+          "comments": [
+            {
+              "originalPosition": 189,
+              "body": "\ud83d\udc4d  I removed this bit.",
+              "createdAt": "2021-03-12T16:00:48Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjEwOTI3ODU4",
+          "commit": {
+            "abbreviatedOid": "4097d0d"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-12T16:00:56Z",
+          "updatedAt": "2021-03-12T16:00:56Z",
+          "comments": [
+            {
+              "originalPosition": 193,
+              "body": "Oops, yes, thanks. IETF foggyness.",
+              "createdAt": "2021-03-12T16:00:56Z",
+              "updatedAt": "2021-03-12T16:04:27Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjEwOTMxMTk5",
+          "commit": {
+            "abbreviatedOid": "ce99e99"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-12T16:04:27Z",
+          "updatedAt": "2021-03-12T16:04:28Z",
+          "comments": [
+            {
+              "originalPosition": 184,
+              "body": "Yep, done!",
+              "createdAt": "2021-03-12T16:04:27Z",
+              "updatedAt": "2021-03-12T16:04:28Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjEwOTMyNjA2",
+          "commit": {
+            "abbreviatedOid": "ce99e99"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-12T16:05:58Z",
+          "updatedAt": "2021-03-12T16:05:58Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "Eh, I left this as-is for now. We can clean it up later if it's bothersome to others.",
+              "createdAt": "2021-03-12T16:05:58Z",
+              "updatedAt": "2021-03-12T16:05:58Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjE1OTgzMjAy",
+          "commit": {
+            "abbreviatedOid": "ce99e99"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "PIR!",
+          "createdAt": "2021-03-19T00:51:35Z",
+          "updatedAt": "2021-03-19T00:51:35Z",
+          "comments": []
+        }
+      ]
+    }
+  ]
+}
