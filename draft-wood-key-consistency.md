@@ -138,11 +138,11 @@ the server corresponding to the desired key is considered malicious.
 In this model, users would directly query servers for their corresponding public key, as shown below.
 
 ~~~
-┌──────────┐              ┌─────────┐
-│          │              │         │
-│  Client  ├──────────────► Server  │
-│          │              │         │
-└──────────┘              └─────────┘
++----------+              +----------+
+|          |              |          |
+|  Client  +-------------->  Server  |
+|          |              |          |
++----------+              +----------+
 ~~~
 {: #fig-disc-direct title="Direct Discovery Example"}
 
@@ -164,25 +164,24 @@ In this model, there exists a proxy that fetches keys from servers on behalf of 
 below.
 
 ~~~
-┌──────────┐
-│          │
-│  Client  ├──────────┐
-│          │          │
-└──────────┘          │
-                      │
-┌──────────┐         ┌▼─────────┐      ┌─────────┐
-│          │         │          │      │         │
-│  Client  ├─────────►  Proxy   ├──────► Server  │
-│          │         │          │      │         │
-└──────────┘         └▲─────────┘      └─────────┘
-      x               │
-      x               │
-      x               │
-┌──────────┐          │
-│          │          │
-│  Client  ├──────────┘
-│          │
-└──────────┘
++----------+
+|          |
+|  Client  +----------+
+|          |          |
++----------+          |
+                      |
++----------+         +\/--------+      +----------+
+|          |         |          |      |          |
+|  Client  +--------->   Proxy  +------>  Server  |
+|          |         |          |      |          |
++----------+         +^---------+      +----------+
+      x               |
+      x               |
++----------+          |
+|          |          |
+|  Client  +----------+
+|          |
++----------+
 ~~~
 {: #fig-disc-proxy title="Single Proxy Discovery Example"}
 
@@ -200,25 +199,24 @@ Mitigating these risks may require tamper-proof logs as in {{server-based}}, or 
 In this model, users leverage multiple, non-colluding proxies to fetch keys from servers, as shown below.
 
 ~~~
-                     ┌──────────┐
-                     │          │
-     ┌───────────────►  Proxy   ├───────────┐
-     │               │          │           │
-     │               └──────────┘           │
-     │                                      │
-┌────┴─────┐         ┌──────────┐      ┌────▼────┐
-│          │         │          │      │         │
-│  Client  ├─────────►  Proxy   ├──────► Server  │
-│          │         │          │      │         │
-└─────┬────┘         └──────────┘      └────▲────┘
-      │                    x                │
-      │                    x                │
-      │                    x                │
-      │              ┌──────────┐           │
-      │              │          │           │
-      └──────────────►  Proxy   ├───────────┘
-                     │          │
-                     └──────────┘
+                     +----------+
+                     |          |
+     +--------------->   Proxy  +-----------+
+     |               |          |           |
+     |               +----------+           |
+     |                                      |
++----------+         +----------+      +----\/----+
+|          │         |          |      |          |
+|  Client  +--------->   Proxy  +------>  Server  |
+|          │         |          |      |          |
++----------+         +----------+      +----^-----+
+      |                    x                |
+      |                    x                |
+      |              +----------+           |
+      |              |          |           |
+      +-------------->  Proxy   +-----------+
+                     |          |
+                     +----------+
 ~~~
 {: #fig-disc-multi-proxy title="Multi-Proxy Discovery Example"}
 
@@ -233,25 +231,24 @@ Tor, there does not exist a special-purpose anonymity network for this purpose.
 In this model, servers publish keys in an external database and clients fetch keys from the database, as shown below.
 
 ~~~
-┌──────────┐
-│          │
-│  Client  ├───────────┐
-│          │           │
-└──────────┘           │
-                       │
-┌──────────┐         ┌─▼────────┐      ┌─────────┐
-│          │         │          │      │         │
-│  Client  ├─────────► Database ◄──────┤ Server  │
-│          │         │          │      │         │
-└──────────┘         └─▲────────┘      └─────────┘
-     x                 │
-     x                 │
-     x                 │
-┌──────────┐           │
-│          │           │
-│  Client  ├───────────┘
-│          │
-└──────────┘
++----------+
+|          |
+|  Client  +-----------+
+|          |           |
++----------+           |
+                       |
++----------+         +----------+      +----------+
+|          |         |          |      |          |
+|  Client  +---------> Database <------+  Server  |
+|          |         |          |      |          |
++----------+         +----------+      +----------+
+     x                 |
+     x                 |
++----------+           |
+|          |           |
+|  Client  +-----------+
+|          |
++----------+
 ~~~
 {: #fig-disc-database title="Database Discovery Example"}
 
