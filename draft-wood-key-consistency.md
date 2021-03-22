@@ -283,6 +283,25 @@ smaller groups based on when keys are acquired. Such considerations are already 
 Privacy Pass ecosystem, more discussion can be found at {{PRIVACY-PASS-ARCH}}. Setting a minimum validity
 period limits the ability of a server to rotate keys, but also limits the rate of key rotation.
 
+# Key-Based Encryption {#kbe}
+
+The other schemes described here all attempt to directly limit the number of keys that a client
+might accept.  However, by changing how keys are used, clients can impose costs on servers that
+might discourage key diversity.
+
+Key-based encryption has a client encrypt the information that it sends to a server, such as a token
+or signed object generated with the server keys.  This encryption uses a key derived from the key
+configuration and the client does not include any form of key identifier along with the encrypted
+information.  If the derivation uses a pre-image resistant function (like HKDF), the server can only
+decrypt the information if it knows the key configuration.  As there is no information the server
+can use to identify which key was used, it is forced to perform trial decryption if it wants to use
+multiple keys.
+
+These costs are only linear in terms of the number of active keys.  This doesn't prevent the use of
+multiple keys, it only makes their use incrementally more expensive.  Trial decryption costs can be
+increased by choosing a time- or memory-hard function such as {{?ARGON2=I-D.irtf-cfrg-argon2}} to
+generate keys.
+
 # Future Work
 
 The model in {{anon-discovery}} seems to be the most lightweight and easy-to-deploy mechanism for
