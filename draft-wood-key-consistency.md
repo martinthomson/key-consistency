@@ -37,25 +37,11 @@ author:
     email: caw@heapingbits.net
 
 normative:
-  RFC7748:
 informative:
   ODOH: I-D.pauly-dprive-oblivious-doh
   PRIVACY-PASS: I-D.ietf-privacypass-protocol
   PRIVACY-PASS-ARCH: I-D.ietf-privacypass-architecture
-  OHTTP:
-    title: "Oblivious HTTP"
-    date: {DATE}
-    seriesinfo:
-      Internet-Draft: draft-ietf-http-oblivious-latest
-    author:
-      -
-        ins: M.Thomson
-        name: Martin Thomson
-        org: Mozilla
-      -
-        ins: C.A.Wood
-        name: Christopher A. Wood
-        org: Cloudflare
+  OHTTP: I-D.thomson-http-oblivious
 
 --- abstract
 
@@ -68,15 +54,18 @@ of open problems in this area.
 
 # Introduction
 
-Several proposed privacy-enhancing protocols such as Privacy Pass {{PRIVACY-PASS}},
-Oblivious DoH {{ODOH}}, and Oblivious HTTP {{OHTTP}}
-require clients to obtain and use a public key for execution. For example, Privacy Pass public keys
-are used by clients for validating privately issued tokens for anonymous session resumption. Oblivious DoH and HTTP both use public
-keys to encrypt messages to a particular server. In all cases, a common security goal is that recipients
-cannot link usage of a public key to a specific (set of) user(s). In other words, all users of a public
-key should belong to the same anonymity set, and an attacker should not be able to actively reduce the
-size of this anonymity set. Moreover, an attacker should not be able to convince users to use a key that
-does not belong to the intended server.
+Several proposed privacy-enhancing protocols such as Privacy Pass
+{{PRIVACY-PASS}}, Oblivious DoH {{ODOH}}, and Oblivious HTTP {{OHTTP}} require
+clients to obtain and use a public key for execution. For example, Privacy Pass
+public keys are used by clients for validating privately issued tokens for
+anonymous session resumption. Oblivious DoH and HTTP both use public keys to
+encrypt messages to a particular server.
+
+User privacy in these systems depends on users receiving a key that many, if not
+all, others users receive.  If a user were to receive a public key that was
+specific to them, or restricted to a small set of users, then use of that public
+key could be used to learn targeted information about the public key.  Users
+also need to receive the correct public key.
 
 In this document, we elaborate on these core requirements, and survey various system designs that might
 be used to satisfy them. The purpose of this document is to highlight challenges in building and deploying
@@ -84,7 +73,7 @@ solutions to this problem.
 
 ## Requirements
 
-{::boilerplate bcp14}
+{::boilerplate bcp14-tagged}
 
 # Terminology
 
@@ -100,18 +89,20 @@ The KCCS's consistency model is dependent on the implementation and reliant syst
 
 # Core Requirements {#reqs}
 
-Privacy-focused protocols which rely on widely shared public keys typically require keys be consistent
-and correct. Informally, key consistency is the requirement that all users of a key share the
-same view of the key. Some protocols depend on large sets of users with consistent keys for privacy
-reasons. Specifically, all users with a consistent key represent an anonymity set wherein each user of
-the key in that set is indistinguishable from the rest. An attacker that can actively cause inconsistent
-views of keys can therefore compromise user privacy.
+Privacy-focused protocols which rely on widely shared public keys typically
+require keys be consistent and correct. Informally, key consistency is the
+requirement that all users of a key share the same view of the key; key
+correctness is that it belongs to the intended entity and is not available to an
+attacker.
 
-An attacker may separately reduce a user's privacy by forcing them into a smaller anonymity set by using
-an incorrect key. Informally, a key is correct if it belongs to the intended server and is not otherwise
-available to an attacker. In a public key setting, this means that the public key is that which
-is owned by the corresponding owner, and only that owner has access to the private key. An attacker
-that can actively cause users to make use of incorrect keys may be able to compromise user privacy.
+Some protocols depend on large sets of users with consistent keys for privacy
+reasons. Specifically, all users with a consistent key represent an anonymity
+set wherein each user of the key in that set is indistinguishable from the
+rest. An attacker that can actively cause inconsistent views of keys can
+therefore compromise user privacy.
+
+An attacker that can cause a user to use an incorrect key will likely compromise
+the entire protocol, not just privacy.
 
 Reliant systems must also consider agility when trying to satisfy these requirements. A naive solution to
 ensuring consistent and correct keys is to only use a single, fixed key pair for the entirety of
@@ -119,17 +110,21 @@ the system. Users can then embed this key into software or elsewhere as needed, 
 mechanics or controls to ensure that other users have a different key. However, this solution clearly
 is not viable in practice. If the corresponding key is compromised, the system fails. Rotation must
 therefore be supported, and in doing so, users need some mechanism to ensure that newly rotated
-keys are consistent and correct. Operationally, servers rotating keys may likely need to accommodate
+keys are consistent and correct.
+
+Operationally, servers rotating keys may likely need to accommodate
 distributed system state-synchronization issues without sacrificing availability. Some systems and protocols
 may choose to prioritize strong consistency over availability, but this document assumes that availability
-is preferred to consistency.
+is preferred to total consistency.
 
 # Deploying Consistency and Correctness
 
 There are a variety of ways in which reliant systems may build _key consistency and correct systems_ (KCCS),
 ranging in operational complexity to ease-of-implementation. In this section, we survey a number of
 possible solutions. The viability of each varies depending on the applicable threat model, external
-dependencies, and overall reliant system's requirements. We do not include the fixed public key model from
+dependencies, and overall reliant system's requirements.
+
+We do not include the fixed public key model from
 {{reqs}}, as this is likely not a viable solution for systems and protocols in practice. In all scenarios,
 the server corresponding to the desired key is considered malicious.
 
