@@ -64,7 +64,7 @@ encrypt messages to a particular server.
 User privacy in these systems depends on users receiving a key that many, if not
 all, others users receive.  If a user were to receive a public key that was
 specific to them, or restricted to a small set of users, then use of that public
-key could be used to learn targeted information about the public key.  Users
+key could be used to learn targeted information about the user.  Users
 also need to receive the correct public key.
 
 In this document, we elaborate on these core requirements, and survey various system designs that might
