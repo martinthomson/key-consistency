@@ -124,7 +124,7 @@ distributed system state-synchronization issues without sacrificing availability
 may choose to prioritize strong consistency over availability, but this document assumes that availability
 is preferred to consistency.
 
-# Deploying Consistency and Correctness
+# Consistency and Correctness at Key Acquisition
 
 There are a variety of ways in which reliant systems may build _key consistency and correct systems_ (KCCS),
 ranging in operational complexity to ease-of-implementation. In this section, we survey a number of
@@ -283,24 +283,47 @@ smaller groups based on when keys are acquired. Such considerations are already 
 Privacy Pass ecosystem, more discussion can be found at {{PRIVACY-PASS-ARCH}}. Setting a minimum validity
 period limits the ability of a server to rotate keys, but also limits the rate of key rotation.
 
-# Key-Based Encryption {#kbe}
+# Separate Consistency Verification
 
 The other schemes described here all attempt to directly limit the number of keys that a client
 might accept.  However, by changing how keys are used, clients can impose costs on servers that
 might discourage key diversity.
 
+Protocols that have distinctly separate processes for acquiring and using keys might benefit from
+moving consistency checks to the usage part of the protocol.  Correctness might be guaranteed
+through a relatively simple process, such obtaining keys directly from a server.  A separate
+correctness check is then applied before keys are used.
+
+## Independent Verification {#civ}
+
+Anonymous queries to verify key consistency can be used prior to use of keys.  A request for the
+current key (or limited set of keys) will reveal if the key that was acquired is different than the
+original.  If the key that was originally obtained is not included, the client can abort any use of
+the key.
+
+It is important that any validation process not carry any information that might tie it to the
+original key discovery process or that the system providing verification be trusted.  A proxy (see
+{{proxy-based}}) might be sufficient for providing anonymity, though more robust anonymity
+protections (see {{anon-discovery}}) could provide stronger guarantees.  Querying a database (see
+{{external-db-based}}) might provide independent verification if that database can be trusted not to
+provide answers that change based on client identity.
+
+## Key-Based Encryption {#kbe}
+
 Key-based encryption has a client encrypt the information that it sends to a server, such as a token
 or signed object generated with the server keys.  This encryption uses a key derived from the key
-configuration and the client does not include any form of key identifier along with the encrypted
-information.  If the derivation uses a pre-image resistant function (like HKDF), the server can only
-decrypt the information if it knows the key configuration.  As there is no information the server
-can use to identify which key was used, it is forced to perform trial decryption if it wants to use
-multiple keys.
+configuration, specifically not including any form of key identifier along with the encrypted
+information.  If key derivation for the encryption uses a pre-image resistant function (like HKDF),
+the server can only decrypt the information if it knows the key configuration.  As there is no
+information the server can use to identify which key was used, it is forced to perform trial
+decryption if it wants to use multiple keys.
 
 These costs are only linear in terms of the number of active keys.  This doesn't prevent the use of
 multiple keys, it only makes their use incrementally more expensive.  Trial decryption costs can be
 increased by choosing a time- or memory-hard function such as {{?ARGON2=I-D.irtf-cfrg-argon2}} to
 generate keys.
+
+Encrypting this way could provide better latency properties than a separate check.
 
 # Future Work
 
