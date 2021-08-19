@@ -15,7 +15,7 @@ author:
  -
     ins: A. Davidson
     name: Alex Davidson
-    org: LIP Lisboa
+    org: Brave Software
     email: alex.davidson92@gmail.com
  -
     ins: M. Finkel
