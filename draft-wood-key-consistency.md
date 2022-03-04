@@ -41,7 +41,7 @@ informative:
   ODOH: I-D.pauly-dprive-oblivious-doh
   PRIVACY-PASS: I-D.ietf-privacypass-protocol
   PRIVACY-PASS-ARCH: I-D.ietf-privacypass-architecture
-  OHTTP: I-D.thomson-http-oblivious
+  OHTTP: I-D.ietf-ohai-ohttp
 
 --- abstract
 
@@ -62,7 +62,7 @@ anonymous session resumption. Oblivious DoH and HTTP both use public keys to
 encrypt messages to a particular server.
 
 User privacy in these systems depends on users receiving a key that many, if not
-all, others users receive.  If a user were to receive a public key that was
+all, other users receive.  If a user were to receive a public key that was
 specific to them, or restricted to a small set of users, then use of that public
 key could be used to learn targeted information about the user.  Users
 also need to receive the correct public key.
@@ -80,7 +80,7 @@ solutions to this problem.
 This document defines the following terms:
 
 Key Consistency and Correctness System (KCCS):
-: A mechanism for providing clients with a consistent view of cryptographic key material.
+: A mechanism for providing clients with a consistent view of cryptographic key material within a period of time.
 
 Reliant System:
 : A system that embeds one or more key consistency and correctness systems.
@@ -91,9 +91,10 @@ The KCCS's consistency model is dependent on the implementation and reliant syst
 
 Privacy-focused protocols which rely on widely shared public keys typically
 require keys be consistent and correct. Informally, key consistency is the
-requirement that all users of a key share the same view of the key; key
-correctness is that it belongs to the intended entity and is not available to an
-attacker.
+requirement that all users who communicate with an entity share the same view
+of the key associated with that entity; key correctness is that the key's
+secret information is controlled by the intended entity and is not known to be
+available to an external attacker.
 
 Some protocols depend on large sets of users with consistent keys for privacy
 reasons. Specifically, all users with a consistent key represent an anonymity
@@ -119,7 +120,7 @@ is preferred to total consistency.
 
 # Consistency and Correctness at Key Acquisition
 
-There are a variety of ways in which reliant systems may build _key consistency and correct systems_ (KCCS),
+There are a variety of ways in which reliant systems may build key consistency and correct systems (KCCS),
 ranging in operational complexity to ease-of-implementation. In this section, we survey a number of
 possible solutions. The viability of each varies depending on the applicable threat model, external
 dependencies, and overall reliant system's requirements.
@@ -143,7 +144,7 @@ In this model, users would directly query servers for their corresponding public
 
 The properties of this solution depend on external mechanisms in place to ensure consistency or
 correctness. Absent any such mechanisms, servers can produce unique keys for users without detection.
-External mechanism to ensure consistency here might include, though are not limited to:
+External mechanisms to ensure consistency here might include, though are not limited to:
 
 - Presenting a signed assertion from a trusted entity that the key is correct.
 - Presenting proof that the key is present in some tamper-proof log, similar to Certificate
@@ -216,7 +217,10 @@ In this model, users leverage multiple, non-colluding proxies to fetch keys from
 {: #fig-disc-multi-proxy title="Multi-Proxy Discovery Example"}
 
 These proxies are ideally spread across multiple vantage points. Examples of proxies include anonymous
-systems such as Tor. Depending on how clients fetch such keys from servers, it may become
+systems such as Tor. Tor proxies are general purpose and operate at a lower layer, on arbitrary
+communication flows, and therefore they are oblivious to clients fetching keys. A large set of untrusted
+proxies that are aware of key fetch requests ({{proxy-based}}) may be used in a similar way. Depending
+on how clients fetch such keys from servers, it may become
 more difficult for servers to uniquely target individual users with unique keys without detection.
 This is especially true as the number of users of these anonymity networks increases. However, beyond
 Tor, there does not exist a special-purpose anonymity network for this purpose.
@@ -264,8 +268,9 @@ of such databases are as follows:
   protocol, but the specific consensus protocol is dependent on the implementation.
 
 For privacy, users should either download the entire database and query it locally, or remotely query the database
-using a private information retrieval (PIR) protocol. In the case where the database is downloaded locally, it
-should be considered stale and re-fetch periodically. The frequency of such updates can likely be infrequent
+using privacy-preserving queries (e.g., a private information retrieval (PIR) protocol). In the case where the
+database is downloaded locally, it
+should be considered stale and re-fetched periodically. The frequency of such updates can likely be infrequent
 in practice, as frequent key updates or rotations may affect privacy; see {{validity-periods}} for details.
 Downloading the entire database works best if there are a small number of entries, as it does not otherwise
 impose bandwidth costs on each client that may be impractical.
