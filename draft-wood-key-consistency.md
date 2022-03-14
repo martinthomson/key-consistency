@@ -133,10 +133,10 @@ the server corresponding to the desired key is considered malicious.
 
 In this model, users would directly query servers for their corresponding public key, as shown below.
 
-~~~
+~~~ aasvg
 +----------+              +----------+
 |          |              |          |
-|  Client  +-------------->  Server  |
+|  Client  +------------->+  Server  |
 |          |              |          |
 +----------+              +----------+
 ~~~
@@ -159,23 +159,23 @@ external log for keys, this may be a viable solution.
 In this model, there exists a proxy that fetches keys from servers on behalf of multiple users, as shown
 below.
 
-~~~
+~~~ aasvg
 +----------+
 |          |
-|  Client  +----------+
-|          |          |
-+----------+          |
-                      |
-+----------+         +\/--------+      +----------+
-|          |         |          |      |          |
-|  Client  +--------->   Proxy  +------>  Server  |
-|          |         |          |      |          |
-+----------+         +^---------+      +----------+
-      x               |
-      x               |
-+----------+          |
-|          |          |
-|  Client  +----------+
+|  Client  +--+--------+
+|          |           |
++----------+           |
+                       v
++----------+         +----------+       +----------+
+|          |         |          |       |          |
+|  Client  +-------->+  Proxy   +------>+  Server  |
+|          |         |          |       |          |
++----------+         +-+--------+       +----------+
+      x                ^
+      x                |
++----------+           |
+|          |           |
+|  Client  +-----------+
 |          |
 +----------+
 ~~~
@@ -194,23 +194,23 @@ Mitigating these risks may require tamper-proof logs as in {{server-based}}, or 
 
 In this model, users leverage multiple, non-colluding proxies to fetch keys from servers, as shown below.
 
-~~~
+~~~ aasvg
                      +----------+
                      |          |
-     +--------------->   Proxy  +-----------+
-     |               |          |           |
-     |               +----------+           |
-     |                                      |
-+----------+         +----------+      +----\/----+
-|          │         |          |      |          |
-|  Client  +--------->   Proxy  +------>  Server  |
-|          │         |          |      |          |
-+----------+         +----------+      +----^-----+
-      |                    x                |
-      |                    x                |
-      |              +----------+           |
-      |              |          |           |
-      +-------------->  Proxy   +-----------+
+     +-------------->+  Proxy   +------------+
+     |               |          |            |
+     |               +----------+            |
+     |                                       v
++----------+         +----------+       +----+-----+
+|          |         |          |       |          |
+|  Client  +-------->+  Proxy   +------>+  Server  |
+|          |         |          |       |          |
++----------+         +----------+       +----+-----+
+      |                    x                 ^
+      |                    x                 |
+      |              +----------+            |
+      |              |          |            |
+      +------------->+  Proxy   +------------+
                      |          |
                      +----------+
 ~~~
@@ -229,19 +229,19 @@ Tor, there does not exist a special-purpose anonymity network for this purpose.
 
 In this model, servers publish keys in an external database and clients fetch keys from the database, as shown below.
 
-~~~
+~~~ aasvg
 +----------+
 |          |
 |  Client  +-----------+
 |          |           |
 +----------+           |
-                       |
-+----------+         +----------+      +----------+
-|          |         |          |      |          |
-|  Client  +---------> Database <------+  Server  |
-|          |         |          |      |          |
-+----------+         +----------+      +----------+
-     x                 |
+                       v
++----------+         +-+--------+       +----------+
+|          |         |          |       |          |
+|  Client  +-------->+ Database +<------+  Server  |
+|          |         |          |       |          |
++----------+         +-+--------+       +----------+
+     x                 ^
      x                 |
 +----------+           |
 |          |           |
