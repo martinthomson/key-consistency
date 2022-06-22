@@ -319,9 +319,10 @@ information the server can use to identify which key was used, it is forced to p
 decryption if it wants to use multiple keys.
 
 These costs are only linear in terms of the number of active keys.  This doesn't prevent the use of
-multiple keys, it only makes their use incrementally more expensive.  Trial decryption costs can be
-increased by choosing a time- or memory-hard function such as {{?ARGON2=I-D.irtf-cfrg-argon2}} to
-generate keys.
+multiple keys; it only makes their use incrementally more expensive.  Adding a nonce with sufficient
+entropy might be used to force key derivation for every message.  Using a time- or memory-hard key
+derivation function such as {{?ARGON2=I-D.irtf-cfrg-argon2}} can then be used to increase the cost
+of trial decryption.
 
 Encrypting this way could provide better latency properties than a separate check.
 
