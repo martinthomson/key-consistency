@@ -5,11 +5,22 @@ docname: draft-wood-key-consistency-latest
 date:
 category: info
 
-ipr: trust200902
-keyword: Internet-Draft
-
-stand_alone: yes
-pi: [toc, sortrefs, symrefs]
+v: 3
+# area: Security
+# workgroup: WG
+venue:
+#  group: WG
+#  type: Working Group
+#  mail: WG@example.com
+#  arch: https://example.com/WG
+  github: "chris-wood/key-consistency"
+  latest: "https://chris-wood.github.io/key-consistency/draft-wood-key-consistency.html"
+keyword:
+ - privacy
+ - consistency
+ - correctness
+ - crypto
+ - blockchain
 
 author:
  -
