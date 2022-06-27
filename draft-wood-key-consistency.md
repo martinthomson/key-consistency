@@ -105,18 +105,21 @@ therefore compromise user privacy.
 An attacker that can cause a user to use an incorrect key will likely compromise
 the entire protocol, not just privacy.
 
-Reliant systems must also consider agility when trying to satisfy these requirements. A naive solution to
-ensuring consistent and correct keys is to only use a single, fixed key pair for the entirety of
-the system. Users can then embed this key into software or elsewhere as needed, without any additional
-mechanics or controls to ensure that other users have a different key. However, this solution clearly
-is not viable in practice. If the corresponding key is compromised, the system fails. Rotation must
-therefore be supported, and in doing so, users need some mechanism to ensure that newly rotated
-keys are consistent and correct.
+Reliant systems must also consider agility when trying to satisfy these requirements. A naive
+solution to ensuring consistent and correct keys is to only use a single, fixed key pair for the
+entirety of the system. Dependent systems can embed a copy of a fixed key into software or
+configurations, without any additional mechanisms that ensure that all reliant systems have the same
+key. However, this option has catastrophic failure properties: if the corresponding key is
+compromised, the system fails completely.
 
-Operationally, servers rotating keys may likely need to accommodate
-distributed system state-synchronization issues without sacrificing availability. Some systems and protocols
-may choose to prioritize strong consistency over availability, but this document assumes that availability
-is preferred to total consistency.
+Such fixed-key systems might avoid - or recover from - such a catastrophic failure using updates to
+software or configuration.  Observe however that rollout of new software or configuration can either
+lead to loss of availability or a temporary state where different keys are active.
+
+This document assumes that availability is preferred to perfect consistency.  Even if a fixed key
+approach is chosen, the need for consistency and correctness remains.  Relying on a fixed key only
+shifts the consistency and correctness requirements to the processes that manage software or
+configurations.
 
 # Consistency and Correctness at Key Acquisition
 
@@ -125,9 +128,7 @@ ranging in operational complexity to ease-of-implementation. In this section, we
 possible solutions. The viability of each varies depending on the applicable threat model, external
 dependencies, and overall reliant system's requirements.
 
-We do not include the fixed public key model from
-{{reqs}}, as this is likely not a viable solution for systems and protocols in practice. In all scenarios,
-the server corresponding to the desired key is considered malicious.
+In all scenarios, the server corresponding to the desired key is considered malicious.
 
 ## Direct Discovery {#server-based}
 
