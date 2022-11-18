@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Key Consistency and Discovery</title>
+<meta content="Alex Davidson" name="author">
+<meta content="Matthew Finkel" name="author">
+<meta content="Martin Thomson" name="author">
+<meta content="Christopher A. Wood" name="author">
+<meta content="
+       This document describes the key consistency and correctness requirements of protocols such as
+Privacy Pass, Oblivious DoH, and Oblivious HTTP for user privacy. It discusses several mechanisms
+and proposals for enabling user privacy in varying threat models. In concludes with discussion
+of open problems in this area. 
+    " name="description">
+<meta content="xml2rfc 3.15.2" name="generator">
+<meta content="privacy" name="keyword">
+<meta content="consistency" name="keyword">
+<meta content="correctness" name="keyword">
+<meta content="crypto" name="keyword">
+<meta content="blockchain" name="keyword">
+<meta content="draft-ietf-privacypass-key-consistency-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.15.2
+    Python 3.10.8
+    appdirs 1.4.4
+    ConfigArgParse 1.5.3
+    google-i18n-address 2.5.2
+    html5lib 1.1
+    intervaltree 3.1.0
+    Jinja2 3.1.2
+    lxml 4.9.1
+    MarkupSafe 2.1.1
+    pycountry 22.3.5
+    PyYAML 6.0
+    requests 2.27.1
+    setuptools 59.4.0
+    six 1.16.0
+    wcwidth 0.2.5
+-->
+<link href="draft-ietf-privacypass-key-consistency.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Cabin Condensed", sans-serif;
+  font-weight: 600;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1#title {
+  font-size: 32px;
+  line-height: 40px;
+  clear: both;
+}
+h1#title, h1#rfcnum {
+  margin: 1.5em 0 0.2em;
+}
+h1#rfcnum + h1#title {
+  margin: 0.2em 0;
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+}
+#abstract+p code, #abstract+p samp, #abstract+p tt {
+  font-size: 16px;
+  line-height: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+/* font-family isn't space-separated, but =~ will have to do */
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  border: none;
+  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+     support flexbox yet.
+  */
+  display: table;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+}
+:is(ol, ul) :is(ol, ul) {
+  margin-left: 1em;
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+.ulCompact li {
+  margin: 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+}
+ul.empty li, .ulEmpty li {
+  margin-top: 0.5em;
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  line-height: 100%;
+  margin: 0 0 0 2em;
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+}
+dl > dt {
+  float: left;
+  margin-right: 1em;
+  min-width: 12ch;
+}
+dl.dlNewline > dt {
+  float: none;
+}
+dl > dd {
+  margin-bottom: .8em;
+  margin-left: var(--indent) !important; /* stupid element overrides */
+  min-height: 2ex;
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+}
+:is(dl.compact, .dlCompact) > dd > :is(:first-child, .break:first-child + *) {
+  margin-top: 0;
+}
+:is(dl.compact, .dlCompact) > dd > :is(:last-child) {
+  margin-bottom: 0;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+}
+dl .break {
+  display: none;
+}
+
+/* links */
+a, a[href].selfRef:hover {
+  text-decoration: none;
+}
+a[href].selfRef {
+  color: var(--text-color);
+}
+a[href] {
+  color: var(--link-color);
+}
+a[href]:hover {
+  text-decoration: underline;
+}
+a[href].selfRef:hover {
+  background-color: var(--highlight-color);
+}
+a.xref {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) p {
+    margin: -2px 0;
+    max-height: 0;
+    transition: max-height 2s ease, margin 0.5s ease 0.5s;
+    overflow: hidden;
+  }
+  :is(#status-of-memo, #copyright):hover p,
+  :is(#status-of-memo, #copyright) h2:target ~ p {
+    margin: 0.5em 0;
+    max-height: 500px;
+    overflow: auto;
+  }
+  pre, svg {
+    display: inline-block;
+    overflow-x: auto;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+}
+table.right {
+  margin-left: auto;
+}
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+table.left {
+  margin-right: auto;
+}
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+table caption {
+  margin: 0;
+  padding: 3px 0 3px 1em;
+}
+table p {
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+}
+a.pilcrow[href] { color: var(--pilcrow-weak); }
+a.pilcrow[href]:hover { text-decoration: none; }
+@media not print {
+  :hover > a.pilcrow {
+    opacity: 1;
+  }
+  a.pilcrow[href]:hover {
+    color: var(--pilcrow-strong);
+    background-color: transparent;
+  }
+}
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: 14.5px;
+}
+.role {
+  font-variant: all-small-caps;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+}
+#identifiers dt {
+  width: var(--identifier-width);
+  min-width: var(--identifier-width);
+  clear: left;
+  float: left;
+  text-align: right;
+}
+#identifiers dd {
+  margin: 0;
+  margin-left: calc(1em + var(--identifier-width)) !important;
+  min-width: 5em;
+}
+#identifiers .authors .author {
+  display: inline-block;
+  margin-right: 1.5em;
+}
+#identifiers .authors .org {
+  font-style: italic;
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: left;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+}
+#toc nav ul {
+  margin: 0 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+#toc nav li {
+  line-height: 1.3em;
+  margin: 0.75em 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+#toc a.xref {
+  white-space: normal;
+}
+/* references */
+.references dt {
+  text-align: right;
+  font-weight: bold;
+  min-width: 7em;
+}
+.references dt:target::before {
+  content: "⇒";
+  width: 15px;
+  margin: 0 10px 0 -25px;
+}
+.references dd {
+  margin-left: 8em !important;
+  overflow: auto;
+}
+
+.refInstance {
+  margin-bottom: 1.25em;
+}
+
+.references .ascii {
+  margin-bottom: 0.25em;
+}
+
+/* index */
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  margin: 1em 0;
+}
+address.vcard .nameRole {
+  font-weight: 700;
+  margin-left: 0;
+}
+address.vcard .label {
+  margin: 0.5em 0;
+}
+address.vcard .type {
+  display: none;
+}
+.alternative-contact {
+  margin: 1.5em 0 1em;
+}
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses > section {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  #authors-addresses > section > h2 {
+    column-span: all;
+  }
+  /* hack for break-inside: avoid-column */
+  #authors-addresses address {
+    display: inline-block;
+    break-inside: avoid-column;
+  }
+}
+
+.rfcEditorRemove p:first-of-type {
+  font-style: italic;
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+/* alternative layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+  }
+  #toc.active {
+      opacity: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 2px 0 2px 6px;
+    padding-right: 1em;
+    font-size: 18px;
+    line-height: 24px;
+    min-width: 190px;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+  }
+  #toc h2::before { /* css hamburger */
+    float: right;
+    position: relative;
+    width: 1em;
+    height: 1px;
+    left: -164px;
+    margin: 8px 0 0 0;
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+    content: "";
+  }
+  #toc nav {
+    display: none;
+    background-color: var(--background-color);
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+  #toc.active nav {
+    display: block;
+  }
+  /* Make the collapsed ToC header render white on gray also when it's a link */
+  #toc h2 a,
+  #toc h2 a:link,
+  #toc h2 a:focus,
+  #toc h2 a:hover,
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+  #toc a.toplink {
+    margin-top: 2px;
+  }
+}
+
+/* alternative layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 2em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  #toc nav > ul  {
+    margin-bottom: 2em;
+  }
+  #toc ul {
+    margin: 0 0 0 4px;
+    font-size: var(--small-font-size);
+  }
+  #toc ul :is(p, li) {
+    margin: 2px 0;
+    line-height: 22px;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre {
+    page-break-inside: avoid;
+  }
+  figure {
+    overflow: scroll;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  h2+*, h3+*, h4+*, h5+*, h6+* {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Changes introduced to fix issues found during implementation */
+
+/* Separate body from document info even without intervening H1 */
+section {
+  clear: both;
+}
+
+/* Top align author divs, to avoid names without organization dropping level with org names */
+.author {
+  vertical-align: top;
+}
+
+/* Style section numbers with more space between number and title */
+.section-number {
+  padding-right: 0.5em;
+}
+
+/* Add styling for a link in the ToC that points to the top of the document */
+a.toplink {
+  float: right;
+  margin: 8px 0.5em 0;
+}
+
+/* Provide styling for table cell text alignment */
+table .text-left {
+  text-align: left;
+}
+table .text-center {
+  text-align: center;
+}
+table .text-right {
+  text-align: right;
+}
+
+/* Make the alternative author contact information look less like just another
+   author, and group it closer with the primary author contact information */
+.alternative-contact {
+  margin: 0.5em 0 0.25em 0;
+}
+address .non-ascii {
+  margin: 0 0 0 2em;
+}
+
+/* With it being possible to set tables with alignment
+  left, center, and right, { width: 100%; } does not make sense */
+table {
+  width: auto;
+}
+
+/* Avoid reference text that sits in a block with very wide left margin,
+   because of a long floating dt label.*/
+.references dd {
+  overflow: visible;
+}
+
+/* Control caption placement */
+caption {
+  caption-side: bottom;
+}
+
+/* Limit the width of the author address vcard, so names in right-to-left
+   script don't end up on the other side of the page. */
+
+address.vcard {
+  max-width: 20em;
+  margin-right: auto;
+}
+
+/* For address alignment dependent on LTR or RTL scripts */
+address div.left {
+  text-align: left;
+}
+address div.right {
+  text-align: right;
+}
+
+/* Give the table caption label the same styling as the figcaption */
+
+@media print {
+  .toplink {
+    display: none;
+  }
+
+  /* avoid overwriting the top border line with the ToC header */
+  #toc {
+    padding-top: 1px;
+  }
+
+  /* Avoid page breaks inside dl and author address entries */
+  dd {
+    page-break-before: avoid;
+  }
+  .vcard {
+    page-break-inside: avoid;
+  }
+
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg :is([stroke="black"], [stroke^="#000"]) {
+  stroke: var(--text-color);
+}
+svg :is([stroke="white"], [stroke^="#fff"]) {
+  stroke: var(--background-color);
+}
+svg :is([fill="black"], [fill^="#000"], :not([fill])) {
+  fill: var(--text-color);
+}
+svg :is([stroke="fill"], [fill^="#fff"]) {
+  fill: var(--background-color);
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">Key Consistency and Discovery</td>
+<td class="right">November 2022</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Davidson, et al.</td>
+<td class="center">Expires 22 May 2023</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">Network Working Group</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-ietf-privacypass-key-consistency-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2022-11-18" class="published">18 November 2022</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Informational</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2023-05-22">22 May 2023</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">A. Davidson</div>
+<div class="org">Brave Software</div>
+</div>
+<div class="author">
+      <div class="author-name">M. Finkel</div>
+<div class="org">The Tor Project</div>
+</div>
+<div class="author">
+      <div class="author-name">M. Thomson</div>
+<div class="org">Mozilla</div>
+</div>
+<div class="author">
+      <div class="author-name">C. A. Wood</div>
+<div class="org">Cloudflare</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Key Consistency and Discovery</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document describes the key consistency and correctness requirements of protocols such as
+Privacy Pass, Oblivious DoH, and Oblivious HTTP for user privacy. It discusses several mechanisms
+and proposals for enabling user privacy in varying threat models. In concludes with discussion
+of open problems in this area.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-about-this-document">
+<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">
+        The latest revision of this draft can be found at <span><a href="https://chris-wood.github.io/key-consistency/draft-ietf-privacypass-key-consistency.html">https://chris-wood.github.io/key-consistency/draft-ietf-privacypass-key-consistency.html</a></span>.
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-ietf-privacypass-key-consistency/">https://datatracker.ietf.org/doc/draft-ietf-privacypass-key-consistency/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">Source for this draft and an issue tracker can be found at
+        <span><a href="https://github.com/chris-wood/key-consistency">https://github.com/chris-wood/key-consistency</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 22 May 2023.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2022 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-requirements" class="internal xref">Requirements</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-core-requirements" class="internal xref">Core Requirements</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-consistency-and-correctness" class="internal xref">Consistency and Correctness at Key Acquisition</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-direct-discovery" class="internal xref">Direct Discovery</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-trusted-proxy-discovery" class="internal xref">Trusted Proxy Discovery</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-shared-proxy-with-key-confi" class="internal xref">Shared Proxy with Key Confirmation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-multi-proxy-discovery" class="internal xref">Multi-Proxy Discovery</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.5">
+                <p id="section-toc.1-1.4.2.5.1"><a href="#section-4.5" class="auto internal xref">4.5</a>.  <a href="#name-database-discovery" class="internal xref">Database Discovery</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-minimum-validity-periods" class="internal xref">Minimum Validity Periods</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-separate-consistency-verifi" class="internal xref">Separate Consistency Verification</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-independent-verification" class="internal xref">Independent Verification</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-key-based-encryption" class="internal xref">Key-Based Encryption</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-future-work" class="internal xref">Future Work</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">Several proposed privacy-enhancing protocols such as Privacy Pass
+<span>[<a href="#PRIVACY-PASS" class="cite xref">PRIVACY-PASS</a>]</span>, Oblivious DoH <span>[<a href="#ODOH" class="cite xref">ODOH</a>]</span>, and Oblivious HTTP <span>[<a href="#OHTTP" class="cite xref">OHTTP</a>]</span> require
+clients to obtain and use a public key for execution. For example, Privacy Pass
+public keys are used by clients for validating privately issued tokens for
+anonymous session resumption. Oblivious DoH and HTTP both use public keys to
+encrypt messages to a particular server.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">User privacy in these systems depends on users receiving a key that many, if not
+all, other users receive.  If a user were to receive a public key that was
+specific to them, or restricted to a small set of users, then use of that public
+key could be used to learn targeted information about the user.  Users
+also need to receive the correct public key.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">In this document, we elaborate on these core requirements, and survey various system designs that might
+be used to satisfy them. The purpose of this document is to highlight challenges in building and deploying
+solutions to this problem.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<div id="requirements">
+<section id="section-1.1">
+        <h3 id="name-requirements">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-requirements" class="section-name selfRef">Requirements</a>
+        </h3>
+<p id="section-1.1-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="terminology">
+<section id="section-2">
+      <h2 id="name-terminology">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
+      </h2>
+<p id="section-2-1">This document defines the following terms:<a href="#section-2-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-2-2">
+        <dt id="section-2-2.1">Key Consistency and Correctness System (KCCS):</dt>
+        <dd style="margin-left: 1.5em" id="section-2-2.2">
+          <p id="section-2-2.2.1">A mechanism for providing clients with a consistent view of cryptographic key material within a period of time.<a href="#section-2-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-2.3">Reliant System:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-2.4">
+          <p id="section-2-2.4.1">A system that embeds one or more key consistency and correctness systems.<a href="#section-2-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+<p id="section-2-3">The KCCS's consistency model is dependent on the implementation and reliant system's threat model.<a href="#section-2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="reqs">
+<section id="section-3">
+      <h2 id="name-core-requirements">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-core-requirements" class="section-name selfRef">Core Requirements</a>
+      </h2>
+<p id="section-3-1">Privacy-focused protocols which rely on widely shared public keys typically
+require keys be consistent and correct. Informally, key consistency is the
+requirement that all users who communicate with an entity share the same view
+of the key associated with that entity; key correctness is that the key's
+secret information is controlled by the intended entity and is not known to be
+available to an external attacker.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">Some protocols depend on large sets of users with consistent keys for privacy
+reasons. Specifically, all users with a consistent key represent an anonymity
+set wherein each user of the key in that set is indistinguishable from the
+rest. An attacker that can actively cause inconsistent views of keys can
+therefore compromise user privacy.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-3">An attacker that can cause a user to use an incorrect key will likely compromise
+the entire protocol, not just privacy.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-4">Reliant systems must also consider agility when trying to satisfy these requirements. A naive solution to
+ensuring consistent and correct keys is to only use a single, fixed key pair for the entirety of
+the system. Users can then embed this key into software or elsewhere as needed, without any additional
+mechanics or controls to ensure that other users have a different key. However, this solution clearly
+is not viable in practice. If the corresponding key is compromised, the system fails. Rotation must
+therefore be supported, and in doing so, users need some mechanism to ensure that newly rotated
+keys are consistent and correct.<a href="#section-3-4" class="pilcrow">¶</a></p>
+<p id="section-3-5">Operationally, servers rotating keys may likely need to accommodate
+distributed system state-synchronization issues without sacrificing availability. Some systems and protocols
+may choose to prioritize strong consistency over availability, but this document assumes that availability
+is preferred to total consistency.<a href="#section-3-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="consistency-and-correctness-at-key-acquisition">
+<section id="section-4">
+      <h2 id="name-consistency-and-correctness">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-consistency-and-correctness" class="section-name selfRef">Consistency and Correctness at Key Acquisition</a>
+      </h2>
+<p id="section-4-1">There are a variety of ways in which reliant systems may build key consistency and correct systems (KCCS),
+ranging in operational complexity to ease-of-implementation. In this section, we survey a number of
+possible solutions. The viability of each varies depending on the applicable threat model, external
+dependencies, and overall reliant system's requirements.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2">We do not include the fixed public key model from
+<a href="#reqs" class="auto internal xref">Section 3</a>, as this is likely not a viable solution for systems and protocols in practice. In all scenarios,
+the server corresponding to the desired key is considered malicious.<a href="#section-4-2" class="pilcrow">¶</a></p>
+<div id="server-based">
+<section id="section-4.1">
+        <h3 id="name-direct-discovery">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-direct-discovery" class="section-name selfRef">Direct Discovery</a>
+        </h3>
+<p id="section-4.1-1">In this model, users would directly query servers for their corresponding public key, as shown below.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<span id="name-direct-discovery-example"></span><div id="fig-disc-direct">
+<figure id="figure-1">
+          <div id="section-4.1-2.1">
+            <div class="alignLeft art-svg artwork" id="section-4.1-2.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="112" width="312" viewBox="0 0 312 112" class="diagram" text-anchor="middle" font-family="Roboto Mono" font-size="13px">
+                <path d="M 8,32 L 8,96" fill="none" stroke="black"></path>
+                <path d="M 96,32 L 96,96" fill="none" stroke="black"></path>
+                <path d="M 216,32 L 216,96" fill="none" stroke="black"></path>
+                <path d="M 304,32 L 304,96" fill="none" stroke="black"></path>
+                <path d="M 8,32 L 96,32" fill="none" stroke="black"></path>
+                <path d="M 216,32 L 304,32" fill="none" stroke="black"></path>
+                <path d="M 96,64 L 208,64" fill="none" stroke="black"></path>
+                <path d="M 8,96 L 96,96" fill="none" stroke="black"></path>
+                <path d="M 216,96 L 304,96" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="216,64 204,58.4 204,69.6" fill="black" transform="rotate(0,208,64)"></polygon>
+                <g class="text">
+                  <text x="52" y="68">Client</text>
+                  <text x="260" y="68">Server</text>
+                </g>
+              </svg><a href="#section-4.1-2.1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-direct-discovery-example" class="selfRef">Direct Discovery Example</a>
+          </figcaption></figure>
+</div>
+<p id="section-4.1-3">The properties of this solution depend on external mechanisms in place to ensure consistency or
+correctness. Absent any such mechanisms, servers can produce unique keys for users without detection.
+External mechanisms to ensure consistency here might include, though are not limited to:<a href="#section-4.1-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1-4.1">Presenting a signed assertion from a trusted entity that the key is correct.<a href="#section-4.1-4.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-4.1-4.2">Presenting proof that the key is present in some tamper-proof log, similar to Certificate
+Transparency (<span>[<a href="#RFC6962" class="cite xref">RFC6962</a>]</span>) logs.<a href="#section-4.1-4.2" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-4.1-4.3">User communication or gossip ensuring that all users have a shared view of the key.<a href="#section-4.1-4.3" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="section-4.1-5">The precise external mechanism used here depends largely on the threat model. If there is a trusted
+external log for keys, this may be a viable solution.<a href="#section-4.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="proxy-based">
+<section id="section-4.2">
+        <h3 id="name-trusted-proxy-discovery">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-trusted-proxy-discovery" class="section-name selfRef">Trusted Proxy Discovery</a>
+        </h3>
+<p id="section-4.2-1">In this model, there exists a trusted proxy that fetches keys from servers on behalf of multiple users, as shown
+below.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<span id="name-single-proxy-discovery-exam"></span><div id="fig-disc-proxy">
+<figure id="figure-2">
+          <div id="section-4.2-2.1">
+            <div class="alignLeft art-svg artwork" id="section-4.2-2.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="320" width="424" viewBox="0 0 424 320" class="diagram" text-anchor="middle" font-family="Roboto Mono" font-size="13px">
+                <path d="M 8,32 L 8,96" fill="none" stroke="black"></path>
+                <path d="M 8,128 L 8,192" fill="none" stroke="black"></path>
+                <path d="M 8,240 L 8,304" fill="none" stroke="black"></path>
+                <path d="M 96,32 L 96,96" fill="none" stroke="black"></path>
+                <path d="M 96,128 L 96,192" fill="none" stroke="black"></path>
+                <path d="M 96,240 L 96,304" fill="none" stroke="black"></path>
+                <path d="M 176,128 L 176,192" fill="none" stroke="black"></path>
+                <path d="M 192,64 L 192,120" fill="none" stroke="black"></path>
+                <path d="M 192,200 L 192,272" fill="none" stroke="black"></path>
+                <path d="M 264,128 L 264,192" fill="none" stroke="black"></path>
+                <path d="M 328,128 L 328,192" fill="none" stroke="black"></path>
+                <path d="M 416,128 L 416,192" fill="none" stroke="black"></path>
+                <path d="M 8,32 L 96,32" fill="none" stroke="black"></path>
+                <path d="M 96,64 L 192,64" fill="none" stroke="black"></path>
+                <path d="M 8,96 L 96,96" fill="none" stroke="black"></path>
+                <path d="M 8,128 L 96,128" fill="none" stroke="black"></path>
+                <path d="M 176,128 L 264,128" fill="none" stroke="black"></path>
+                <path d="M 328,128 L 416,128" fill="none" stroke="black"></path>
+                <path d="M 96,160 L 168,160" fill="none" stroke="black"></path>
+                <path d="M 264,160 L 320,160" fill="none" stroke="black"></path>
+                <path d="M 8,192 L 96,192" fill="none" stroke="black"></path>
+                <path d="M 176,192 L 264,192" fill="none" stroke="black"></path>
+                <path d="M 328,192 L 416,192" fill="none" stroke="black"></path>
+                <path d="M 8,240 L 96,240" fill="none" stroke="black"></path>
+                <path d="M 96,272 L 192,272" fill="none" stroke="black"></path>
+                <path d="M 8,304 L 96,304" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="328,160 316,154.4 316,165.6" fill="black" transform="rotate(0,320,160)"></polygon>
+                <polygon class="arrowhead" points="200,200 188,194.4 188,205.6" fill="black" transform="rotate(270,192,200)"></polygon>
+                <polygon class="arrowhead" points="200,120 188,114.4 188,125.6" fill="black" transform="rotate(90,192,120)"></polygon>
+                <polygon class="arrowhead" points="176,160 164,154.4 164,165.6" fill="black" transform="rotate(0,168,160)"></polygon>
+                <g class="text">
+                  <text x="52" y="68">Client</text>
+                  <text x="52" y="164">Client</text>
+                  <text x="216" y="164">Proxy</text>
+                  <text x="372" y="164">Server</text>
+                  <text x="56" y="212">x</text>
+                  <text x="56" y="228">x</text>
+                  <text x="52" y="276">Client</text>
+                </g>
+              </svg><a href="#section-4.2-2.1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
+<a href="#name-single-proxy-discovery-exam" class="selfRef">Single Proxy Discovery Example</a>
+          </figcaption></figure>
+</div>
+<p id="section-4.2-3">If this proxy is trusted, then all users which request a key from this server are assured they have
+a consistent view of the server key. However, if this proxy is not trusted, operational risks may arise:<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2-4.1">The proxy can collude with the server to give per-user keys to clients.<a href="#section-4.2-4.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-4.2-4.2">The proxy can give all users a key owned by the proxy, and either collude with the server to use this
+key or retroactively use this key to compromise user privacy when users later make use of the key.<a href="#section-4.2-4.2" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="section-4.2-5">Mitigating these risks can be done in a variety of ways. For example, clients may demand tamper-proof
+proof evidence that the key is consistent and correct for the server, using techniques described in <a href="#server-based" class="auto internal xref">Section 4.1</a>.
+Clients may gossip amongst themselves to determine if they are being served different keys.
+Alternatively, the clients may attempt to confirm the key provided by the proxy, as described in <a href="#shared-proxy-with-confirmation" class="auto internal xref">Section 4.3</a>.<a href="#section-4.2-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="shared-proxy-with-confirmation">
+<section id="section-4.3">
+        <h3 id="name-shared-proxy-with-key-confi">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-shared-proxy-with-key-confi" class="section-name selfRef">Shared Proxy with Key Confirmation</a>
+        </h3>
+<p id="section-4.3-1">Clients that retrieve keys through a single proxy can directly confirm the correctness of this key
+provided by the proxy by "checking" with the server. One variant of this checking mechanism is
+described in <span>[<a href="#DOUBLECHECK" class="cite xref">DOUBLECHECK</a>]</span>. Briefly, clients connect directly to the server through some proxy
+(so as to hide their identity) and ask for the key. If this key does not match that provided by the
+shared proxy, the clients conclude that the key is malicious. This is shown in <a href="#fig-disc-shared-proxy" class="auto internal xref">Figure 3</a>.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<span id="name-shared-proxy-with-confirmat"></span><div id="fig-disc-shared-proxy">
+<figure id="figure-3">
+          <div id="section-4.3-2.1">
+            <div class="alignLeft art-svg artwork" id="section-4.3-2.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="352" width="432" viewBox="0 0 432 352" class="diagram" text-anchor="middle" font-family="Roboto Mono" font-size="13px">
+                <path d="M 8,32 L 8,96" fill="none" stroke="black"></path>
+                <path d="M 8,128 L 8,224" fill="none" stroke="black"></path>
+                <path d="M 8,272 L 8,336" fill="none" stroke="black"></path>
+                <path d="M 96,32 L 96,96" fill="none" stroke="black"></path>
+                <path d="M 96,128 L 96,224" fill="none" stroke="black"></path>
+                <path d="M 96,272 L 96,336" fill="none" stroke="black"></path>
+                <path d="M 176,128 L 176,176" fill="none" stroke="black"></path>
+                <path d="M 176,208 L 176,224" fill="none" stroke="black"></path>
+                <path d="M 192,64 L 192,120" fill="none" stroke="black"></path>
+                <path d="M 192,232 L 192,304" fill="none" stroke="black"></path>
+                <path d="M 272,128 L 272,176" fill="none" stroke="black"></path>
+                <path d="M 272,208 L 272,224" fill="none" stroke="black"></path>
+                <path d="M 336,128 L 336,224" fill="none" stroke="black"></path>
+                <path d="M 424,128 L 424,224" fill="none" stroke="black"></path>
+                <path d="M 8,32 L 96,32" fill="none" stroke="black"></path>
+                <path d="M 96,64 L 192,64" fill="none" stroke="black"></path>
+                <path d="M 8,96 L 96,96" fill="none" stroke="black"></path>
+                <path d="M 8,128 L 96,128" fill="none" stroke="black"></path>
+                <path d="M 176,128 L 272,128" fill="none" stroke="black"></path>
+                <path d="M 336,128 L 424,128" fill="none" stroke="black"></path>
+                <path d="M 96,160 L 168,160" fill="none" stroke="black"></path>
+                <path d="M 272,160 L 328,160" fill="none" stroke="black"></path>
+                <path d="M 96,190 L 328,190" fill="none" stroke="black"></path>
+                <path d="M 96,194 L 328,194" fill="none" stroke="black"></path>
+                <path d="M 8,224 L 96,224" fill="none" stroke="black"></path>
+                <path d="M 176,224 L 272,224" fill="none" stroke="black"></path>
+                <path d="M 336,224 L 424,224" fill="none" stroke="black"></path>
+                <path d="M 8,272 L 96,272" fill="none" stroke="black"></path>
+                <path d="M 96,304 L 192,304" fill="none" stroke="black"></path>
+                <path d="M 8,336 L 96,336" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="336,192 324,186.4 324,197.6" fill="black" transform="rotate(0,328,192)"></polygon>
+                <polygon class="arrowhead" points="336,160 324,154.4 324,165.6" fill="black" transform="rotate(0,328,160)"></polygon>
+                <polygon class="arrowhead" points="200,232 188,226.4 188,237.6" fill="black" transform="rotate(270,192,232)"></polygon>
+                <polygon class="arrowhead" points="200,120 188,114.4 188,125.6" fill="black" transform="rotate(90,192,120)"></polygon>
+                <polygon class="arrowhead" points="176,160 164,154.4 164,165.6" fill="black" transform="rotate(0,168,160)"></polygon>
+                <g class="text">
+                  <text x="52" y="68">Client</text>
+                  <text x="220" y="148">Shared</text>
+                  <text x="52" y="164">Client</text>
+                  <text x="224" y="164">Proxy</text>
+                  <text x="380" y="164">Server</text>
+                  <text x="56" y="244">x</text>
+                  <text x="56" y="260">x</text>
+                  <text x="52" y="308">Client</text>
+                </g>
+              </svg><a href="#section-4.3-2.1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
+<a href="#name-shared-proxy-with-confirmat" class="selfRef">Shared Proxy with Confirmation Discovery Example</a>
+          </figcaption></figure>
+</div>
+</section>
+</div>
+<div id="anon-discovery">
+<section id="section-4.4">
+        <h3 id="name-multi-proxy-discovery">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-multi-proxy-discovery" class="section-name selfRef">Multi-Proxy Discovery</a>
+        </h3>
+<p id="section-4.4-1">In this model, users leverage multiple, non-colluding proxies to fetch keys from servers, as shown below.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<span id="name-multi-proxy-discovery-examp"></span><div id="fig-disc-multi-proxy">
+<figure id="figure-4">
+          <div id="section-4.4-2.1">
+            <div class="alignLeft art-svg artwork" id="section-4.4-2.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="320" width="424" viewBox="0 0 424 320" class="diagram" text-anchor="middle" font-family="Roboto Mono" font-size="13px">
+                <path d="M 8,128 L 8,192" fill="none" stroke="black"></path>
+                <path d="M 56,64 L 56,128" fill="none" stroke="black"></path>
+                <path d="M 56,192 L 56,272" fill="none" stroke="black"></path>
+                <path d="M 96,128 L 96,192" fill="none" stroke="black"></path>
+                <path d="M 176,32 L 176,96" fill="none" stroke="black"></path>
+                <path d="M 176,128 L 176,192" fill="none" stroke="black"></path>
+                <path d="M 176,240 L 176,304" fill="none" stroke="black"></path>
+                <path d="M 264,32 L 264,96" fill="none" stroke="black"></path>
+                <path d="M 264,128 L 264,192" fill="none" stroke="black"></path>
+                <path d="M 264,240 L 264,304" fill="none" stroke="black"></path>
+                <path d="M 328,128 L 328,192" fill="none" stroke="black"></path>
+                <path d="M 368,64 L 368,120" fill="none" stroke="black"></path>
+                <path d="M 368,200 L 368,272" fill="none" stroke="black"></path>
+                <path d="M 416,128 L 416,192" fill="none" stroke="black"></path>
+                <path d="M 176,32 L 264,32" fill="none" stroke="black"></path>
+                <path d="M 56,64 L 168,64" fill="none" stroke="black"></path>
+                <path d="M 264,64 L 368,64" fill="none" stroke="black"></path>
+                <path d="M 176,96 L 264,96" fill="none" stroke="black"></path>
+                <path d="M 8,128 L 96,128" fill="none" stroke="black"></path>
+                <path d="M 176,128 L 264,128" fill="none" stroke="black"></path>
+                <path d="M 328,128 L 416,128" fill="none" stroke="black"></path>
+                <path d="M 96,160 L 168,160" fill="none" stroke="black"></path>
+                <path d="M 264,160 L 320,160" fill="none" stroke="black"></path>
+                <path d="M 8,192 L 96,192" fill="none" stroke="black"></path>
+                <path d="M 176,192 L 264,192" fill="none" stroke="black"></path>
+                <path d="M 328,192 L 416,192" fill="none" stroke="black"></path>
+                <path d="M 176,240 L 264,240" fill="none" stroke="black"></path>
+                <path d="M 56,272 L 168,272" fill="none" stroke="black"></path>
+                <path d="M 264,272 L 368,272" fill="none" stroke="black"></path>
+                <path d="M 176,304 L 264,304" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="376,200 364,194.4 364,205.6" fill="black" transform="rotate(270,368,200)"></polygon>
+                <polygon class="arrowhead" points="376,120 364,114.4 364,125.6" fill="black" transform="rotate(90,368,120)"></polygon>
+                <polygon class="arrowhead" points="328,160 316,154.4 316,165.6" fill="black" transform="rotate(0,320,160)"></polygon>
+                <polygon class="arrowhead" points="176,272 164,266.4 164,277.6" fill="black" transform="rotate(0,168,272)"></polygon>
+                <polygon class="arrowhead" points="176,160 164,154.4 164,165.6" fill="black" transform="rotate(0,168,160)"></polygon>
+                <polygon class="arrowhead" points="176,64 164,58.4 164,69.6" fill="black" transform="rotate(0,168,64)"></polygon>
+                <g class="text">
+                  <text x="216" y="68">Proxy</text>
+                  <text x="52" y="164">Client</text>
+                  <text x="216" y="164">Proxy</text>
+                  <text x="372" y="164">Server</text>
+                  <text x="224" y="212">x</text>
+                  <text x="224" y="228">x</text>
+                  <text x="216" y="276">Proxy</text>
+                </g>
+              </svg><a href="#section-4.4-2.1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
+<a href="#name-multi-proxy-discovery-examp" class="selfRef">Multi-Proxy Discovery Example</a>
+          </figcaption></figure>
+</div>
+<p id="section-4.4-3">These proxies are ideally spread across multiple vantage points. Examples of proxies include anonymous
+systems such as Tor. Tor proxies are general purpose and operate at a lower layer, on arbitrary
+communication flows, and therefore they are oblivious to clients fetching keys. A large set of untrusted
+proxies that are aware of key fetch requests (<a href="#proxy-based" class="auto internal xref">Section 4.2</a>) may be used in a similar way. Depending
+on how clients fetch such keys from servers, it may become
+more difficult for servers to uniquely target individual users with unique keys without detection.
+This is especially true as the number of users of these anonymity networks increases. However, beyond
+Tor, there does not exist a special-purpose anonymity network for this purpose.<a href="#section-4.4-3" class="pilcrow">¶</a></p>
+<p id="section-4.4-4">Note that connecting to Tor proxies may not be a viable option (indeed, could even be dangerous) for
+clients operating in managed networks which scrutinize and/or ban Tor traffic.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="external-db-based">
+<section id="section-4.5">
+        <h3 id="name-database-discovery">
+<a href="#section-4.5" class="section-number selfRef">4.5. </a><a href="#name-database-discovery" class="section-name selfRef">Database Discovery</a>
+        </h3>
+<p id="section-4.5-1">In this model, servers publish keys in an external database and clients fetch keys from the database, as shown below.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
+<span id="name-database-discovery-example"></span><div id="fig-disc-database">
+<figure id="figure-5">
+          <div id="section-4.5-2.1">
+            <div class="alignLeft art-svg artwork" id="section-4.5-2.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="320" width="424" viewBox="0 0 424 320" class="diagram" text-anchor="middle" font-family="Roboto Mono" font-size="13px">
+                <path d="M 8,32 L 8,96" fill="none" stroke="black"></path>
+                <path d="M 8,128 L 8,192" fill="none" stroke="black"></path>
+                <path d="M 8,240 L 8,304" fill="none" stroke="black"></path>
+                <path d="M 96,32 L 96,96" fill="none" stroke="black"></path>
+                <path d="M 96,128 L 96,192" fill="none" stroke="black"></path>
+                <path d="M 96,240 L 96,304" fill="none" stroke="black"></path>
+                <path d="M 176,128 L 176,192" fill="none" stroke="black"></path>
+                <path d="M 192,64 L 192,120" fill="none" stroke="black"></path>
+                <path d="M 192,200 L 192,272" fill="none" stroke="black"></path>
+                <path d="M 264,128 L 264,192" fill="none" stroke="black"></path>
+                <path d="M 328,128 L 328,192" fill="none" stroke="black"></path>
+                <path d="M 416,128 L 416,192" fill="none" stroke="black"></path>
+                <path d="M 8,32 L 96,32" fill="none" stroke="black"></path>
+                <path d="M 96,64 L 192,64" fill="none" stroke="black"></path>
+                <path d="M 8,96 L 96,96" fill="none" stroke="black"></path>
+                <path d="M 8,128 L 96,128" fill="none" stroke="black"></path>
+                <path d="M 176,128 L 264,128" fill="none" stroke="black"></path>
+                <path d="M 328,128 L 416,128" fill="none" stroke="black"></path>
+                <path d="M 96,160 L 168,160" fill="none" stroke="black"></path>
+                <path d="M 272,160 L 328,160" fill="none" stroke="black"></path>
+                <path d="M 8,192 L 96,192" fill="none" stroke="black"></path>
+                <path d="M 176,192 L 264,192" fill="none" stroke="black"></path>
+                <path d="M 328,192 L 416,192" fill="none" stroke="black"></path>
+                <path d="M 8,240 L 96,240" fill="none" stroke="black"></path>
+                <path d="M 96,272 L 192,272" fill="none" stroke="black"></path>
+                <path d="M 8,304 L 96,304" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="280,160 268,154.4 268,165.6" fill="black" transform="rotate(180,272,160)"></polygon>
+                <polygon class="arrowhead" points="200,200 188,194.4 188,205.6" fill="black" transform="rotate(270,192,200)"></polygon>
+                <polygon class="arrowhead" points="200,120 188,114.4 188,125.6" fill="black" transform="rotate(90,192,120)"></polygon>
+                <polygon class="arrowhead" points="176,160 164,154.4 164,165.6" fill="black" transform="rotate(0,168,160)"></polygon>
+                <g class="text">
+                  <text x="52" y="68">Client</text>
+                  <text x="52" y="164">Client</text>
+                  <text x="220" y="164">Database</text>
+                  <text x="372" y="164">Server</text>
+                  <text x="48" y="212">x</text>
+                  <text x="48" y="228">x</text>
+                  <text x="52" y="276">Client</text>
+                </g>
+              </svg><a href="#section-4.5-2.1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
+<a href="#name-database-discovery-example" class="selfRef">Database Discovery Example</a>
+          </figcaption></figure>
+</div>
+<p id="section-4.5-3">The database is expected to have a table that asserts mappings between server names and keys. Examples
+of such databases are as follows:<a href="#section-4.5-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.5-4.1">An append-only, audited table similar to that of Certificate Transparency <span>[<a href="#RFC6962" class="cite xref">RFC6962</a>]</span>. The log is operated and
+audited in such a way that the contents of the log are consistent for all users. Any reliant system
+which depends on this type of KCCS requires the log be audited or users have some other mechanism for
+checking their view of the log state (gossiping). However, this type of system does not ensure proactive
+security against malicious servers unless log participants actively check log proofs. This requirement
+may impede deployment in practice. Experience with Certificate Transparency shows
+that most implementations have chosen not to check SignedCertificateTimestamps before
+using (that is, accepting as valid) a corresponding TLS certificate.<a href="#section-4.5-4.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-4.5-4.2">A consensus-based table whose assertions are created by a coalition of entities that periodically agree on
+the correct binding of server names and key material. In this model the agreement is achieved via a consensus
+protocol, but the specific consensus protocol is dependent on the implementation.<a href="#section-4.5-4.2" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="section-4.5-5">For privacy, users should either download the entire database and query it locally, or remotely query the database
+using privacy-preserving queries (e.g., a private information retrieval (PIR) protocol). In the case where the
+database is downloaded locally, it
+should be considered stale and re-fetched periodically. The frequency of such updates can likely be infrequent
+in practice, as frequent key updates or rotations may affect privacy; see <a href="#validity-periods" class="auto internal xref">Section 5</a> for details.
+Downloading the entire database works best if there are a small number of entries, as it does not otherwise
+impose bandwidth costs on each client that may be impractical.<a href="#section-4.5-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="validity-periods">
+<section id="section-5">
+      <h2 id="name-minimum-validity-periods">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-minimum-validity-periods" class="section-name selfRef">Minimum Validity Periods</a>
+      </h2>
+<p id="section-5-1">In addition to ensuring that there is one key at any time, or a limited number keys, any system
+needs to ensure that a server cannot rotate its keys too often in order to divide clients into
+smaller groups based on when keys are acquired. Such considerations are already highlighted within the
+Privacy Pass ecosystem, more discussion can be found at <span>[<a href="#PRIVACY-PASS-ARCH" class="cite xref">PRIVACY-PASS-ARCH</a>]</span>. Setting a minimum validity
+period limits the ability of a server to rotate keys, but also limits the rate of key rotation.<a href="#section-5-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="separate-consistency-verification">
+<section id="section-6">
+      <h2 id="name-separate-consistency-verifi">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-separate-consistency-verifi" class="section-name selfRef">Separate Consistency Verification</a>
+      </h2>
+<p id="section-6-1">The other schemes described here all attempt to directly limit the number of keys that a client
+might accept.  However, by changing how keys are used, clients can impose costs on servers that
+might discourage key diversity.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-2">Protocols that have distinctly separate processes for acquiring and using keys might benefit from
+moving consistency checks to the usage part of the protocol.  Correctness might be guaranteed
+through a relatively simple process, such obtaining keys directly from a server.  A separate
+correctness check is then applied before keys are used.<a href="#section-6-2" class="pilcrow">¶</a></p>
+<div id="civ">
+<section id="section-6.1">
+        <h3 id="name-independent-verification">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-independent-verification" class="section-name selfRef">Independent Verification</a>
+        </h3>
+<p id="section-6.1-1">Anonymous queries to verify key consistency can be used prior to use of keys.  A request for the
+current key (or limited set of keys) will reveal if the key that was acquired is different than the
+original.  If the key that was originally obtained is not included, the client can abort any use of
+the key.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-2">It is important that any validation process not carry any information that might tie it to the
+original key discovery process or that the system providing verification be trusted.  A proxy (see
+<a href="#proxy-based" class="auto internal xref">Section 4.2</a>) might be sufficient for providing anonymity, though more robust anonymity
+protections (see <a href="#anon-discovery" class="auto internal xref">Section 4.4</a>) could provide stronger guarantees.  Querying a database (see
+<a href="#external-db-based" class="auto internal xref">Section 4.5</a>) might provide independent verification if that database can be trusted not to
+provide answers that change based on client identity.<a href="#section-6.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="kbe">
+<section id="section-6.2">
+        <h3 id="name-key-based-encryption">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-key-based-encryption" class="section-name selfRef">Key-Based Encryption</a>
+        </h3>
+<p id="section-6.2-1">Key-based encryption has a client encrypt the information that it sends to a server, such as a token
+or signed object generated with the server keys.  This encryption uses a key derived from the key
+configuration, specifically not including any form of key identifier along with the encrypted
+information.  If key derivation for the encryption uses a pre-image resistant function (like HKDF),
+the server can only decrypt the information if it knows the key configuration.  As there is no
+information the server can use to identify which key was used, it is forced to perform trial
+decryption if it wants to use multiple keys.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2-2">These costs are only linear in terms of the number of active keys.  This doesn't prevent the use of
+multiple keys; it only makes their use incrementally more expensive.  Adding a nonce with sufficient
+entropy might be used to force key derivation for every message.  Using a time- or memory-hard key
+derivation function such as <span>[<a href="#ARGON2" class="cite xref">ARGON2</a>]</span> can then be used to increase the cost
+of trial decryption.<a href="#section-6.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.2-3">Encrypting this way could provide better latency properties than a separate check.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="future-work">
+<section id="section-7">
+      <h2 id="name-future-work">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-future-work" class="section-name selfRef">Future Work</a>
+      </h2>
+<p id="section-7-1">The model in <a href="#anon-discovery" class="auto internal xref">Section 4.4</a> seems to be the most lightweight and easy-to-deploy mechanism for
+ensuring key consistency and correctness. However, it remains unclear if there exists such an
+anonymity network that can scale to the widespread adoption of and requirements of protocols like
+Privacy Pass, Oblivious DoH, or Oblivious HTTP. Also, using such a network carries its own set
+of risks for clients (as described in <a href="#anon-discovery" class="auto internal xref">Section 4.4</a>), so in some cases it might be impractical.
+Existing infrastructure based on technologies like Certificate Transparency or Key Transparency
+may work, but there is currently no general purpose system for transparency of opaque keys (or other application data).<a href="#section-7-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec">
+<section id="section-8">
+      <h2 id="name-security-considerations">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-8-1">This document discusses several models that systems might use to implement public key discovery
+while ensuring key consistency and correctness. It does not make any recommendations for such
+models as the best model depends on differing operational requirements and threat models.<a href="#section-8-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<section id="section-9">
+      <h2 id="name-references">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<section id="section-9.1">
+        <h3 id="name-normative-references">
+<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC6962">[RFC6962]</dt>
+        <dd>
+<span class="refAuthor">Laurie, B.</span>, <span class="refAuthor">Langley, A.</span>, and <span class="refAuthor">E. Kasper</span>, <span class="refTitle">"Certificate Transparency"</span>, <span class="seriesInfo">RFC 6962</span>, <span class="seriesInfo">DOI 10.17487/RFC6962</span>, <time datetime="2013-06" class="refDate">June 2013</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6962">https://www.rfc-editor.org/rfc/rfc6962</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+      <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+<section id="section-9.2">
+        <h3 id="name-informative-references">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="ARGON2">[ARGON2]</dt>
+        <dd>
+<span class="refAuthor">Biryukov, A.</span>, <span class="refAuthor">Dinu, D.</span>, <span class="refAuthor">Khovratovich, D.</span>, and <span class="refAuthor">S. Josefsson</span>, <span class="refTitle">"Argon2 Memory-Hard Function for Password Hashing and Proof-of-Work Applications"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-irtf-cfrg-argon2-13</span>, <time datetime="2021-03-11" class="refDate">11 March 2021</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-argon2-13">https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-argon2-13</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="DOUBLECHECK">[DOUBLECHECK]</dt>
+        <dd>
+<span class="refAuthor">Schwartz, B. M.</span>, <span class="refTitle">"Key Consistency by Double-Checking via a Semi-Trusted Proxy"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-schwartz-ohai-consistency-doublecheck-03</span>, <time datetime="2022-10-19" class="refDate">19 October 2022</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-schwartz-ohai-consistency-doublecheck-03">https://datatracker.ietf.org/doc/html/draft-schwartz-ohai-consistency-doublecheck-03</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="ODOH">[ODOH]</dt>
+        <dd>
+<span class="refAuthor">Kinnear, E.</span>, <span class="refAuthor">McManus, P.</span>, <span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Verma, T.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Oblivious DNS over HTTPS"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-pauly-dprive-oblivious-doh-11</span>, <time datetime="2022-02-17" class="refDate">17 February 2022</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-pauly-dprive-oblivious-doh-11">https://datatracker.ietf.org/doc/html/draft-pauly-dprive-oblivious-doh-11</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="OHTTP">[OHTTP]</dt>
+        <dd>
+<span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Oblivious HTTP"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-ohai-ohttp-05</span>, <time datetime="2022-09-26" class="refDate">26 September 2022</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-ohai-ohttp-05">https://datatracker.ietf.org/doc/html/draft-ietf-ohai-ohttp-05</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="PRIVACY-PASS">[PRIVACY-PASS]</dt>
+        <dd>
+<span class="refAuthor">Celi, S.</span>, <span class="refAuthor">Davidson, A.</span>, <span class="refAuthor">Faz-Hernandez, A.</span>, <span class="refAuthor">Valdez, S.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Privacy Pass Issuance Protocol"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-privacypass-protocol-06</span>, <time datetime="2022-07-06" class="refDate">6 July 2022</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-protocol-06">https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-protocol-06</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="PRIVACY-PASS-ARCH">[PRIVACY-PASS-ARCH]</dt>
+      <dd>
+<span class="refAuthor">Davidson, A.</span>, <span class="refAuthor">Iyengar, J.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"The Privacy Pass Architecture"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-privacypass-architecture-08</span>, <time datetime="2022-10-17" class="refDate">17 October 2022</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-architecture-08">https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-architecture-08</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</section>
+<div id="authors-addresses">
+<section id="appendix-A">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Alex Davidson</span></div>
+<div dir="auto" class="left"><span class="org">Brave Software</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:alex.davidson92@gmail.com" class="email">alex.davidson92@gmail.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Matthew Finkel</span></div>
+<div dir="auto" class="left"><span class="org">The Tor Project</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:sysrqb@torproject.org" class="email">sysrqb@torproject.org</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Martin Thomson</span></div>
+<div dir="auto" class="left"><span class="org">Mozilla</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:mt@lowentropy.net" class="email">mt@lowentropy.net</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Christopher A. Wood</span></div>
+<div dir="auto" class="left"><span class="org">Cloudflare</span></div>
+<div dir="auto" class="left"><span class="street-address">101 Townsend St</span></div>
+<div dir="auto" class="left">
+<span class="locality">San Francisco</span>,  </div>
+<div dir="auto" class="left"><span class="country-name">United States of America</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:caw@heapingbits.net" class="email">caw@heapingbits.net</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
